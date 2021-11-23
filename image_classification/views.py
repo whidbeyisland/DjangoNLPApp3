@@ -60,6 +60,13 @@ def index(request):
             # passing the image as base64 string to avoid storing it to DB or filesystem
             image = form.cleaned_data['image']
             image_bytes = image.file.read()
+
+
+
+            # debug here
+
+
+
             encoded_img = base64.b64encode(image_bytes).decode('ascii')
             image_uri = 'data:%s;base64,%s' % ('image/jpeg', encoded_img)
 
