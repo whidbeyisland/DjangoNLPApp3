@@ -61,20 +61,17 @@ def index(request):
             image = form.cleaned_data['image']
             image_bytes = image.file.read()
 
-
-
-            # debug here
-
-
+            #coati: handle the stuff for your own model here
 
             encoded_img = base64.b64encode(image_bytes).decode('ascii')
             image_uri = 'data:%s;base64,%s' % ('image/jpeg', encoded_img)
 
-            # get predicted label
             try:
                 predicted_label = get_prediction(image_bytes)
             except RuntimeError as re:
-                print(re)
+                #print(re)
+                #racc
+                predicted_label = re
                 # predicted_label = "Prediction Error"
 
     else:
