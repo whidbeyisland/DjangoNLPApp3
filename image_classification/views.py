@@ -2,6 +2,7 @@ import base64
 import io
 import json
 import os
+import gdown
 
 from torchvision import models
 from torchvision import transforms
@@ -10,6 +11,7 @@ from django.shortcuts import render
 from django.conf import settings
 
 from .forms import ImageUploadForm
+from .download_models import download_all_models
 
 
 # PyTorch-related code from: https://pytorch.org/tutorials/intermediate/flask_rest_api_tutorial.html
@@ -67,10 +69,13 @@ def index(request):
             image_uri = 'data:%s;base64,%s' % ('image/jpeg', encoded_img)
 
             try:
-                predicted_label = get_prediction(image_bytes)
-            except RuntimeError as re:
-                #print(re)
                 #racc
+                #predicted_label = get_prediction(image_bytes)
+                predicted_label = download_all_models()
+
+            except RuntimeError as re:
+                #racc
+                #print(re)
                 predicted_label = re
                 # predicted_label = "Prediction Error"
 
