@@ -3,15 +3,32 @@ import io
 import json
 import os
 import gdown
+import fastbook
+fastbook.setup_book()
+import fastai
+import pandas as pd
+import requests
+import torchtext
+import nltk
 
 from torchvision import models
 from torchvision import transforms
 from PIL import Image
 from django.shortcuts import render
 from django.conf import settings
+from fastbook import *
+from torchtext.data import get_tokenizer
+from fastai.text.all import *
+#from pathlib import Path
+
+nltk.download('wordnet')
+from nltk.corpus import wordnet
+from nltk import FreqDist
+from string import punctuation
 
 from .forms import ImageUploadForm
 from .download_models import download_all_models
+from .work_with_models import get_tweet_prediction
 
 
 # PyTorch-related code from: https://pytorch.org/tutorials/intermediate/flask_rest_api_tutorial.html
@@ -51,7 +68,6 @@ def get_prediction(image_bytes):
     class_name, human_label = imagenet_mapping[predicted_idx]
     return human_label
 
-
 def index(request):
     image_uri = None
     predicted_label = None
@@ -71,7 +87,8 @@ def index(request):
             try:
                 #racc
                 #predicted_label = get_prediction(image_bytes)
-                predicted_label = download_all_models()
+                #predicted_label = download_all_models()
+                predicted_label = get_tweet_prediction('test', 'fruit')
 
             except RuntimeError as re:
                 #racc

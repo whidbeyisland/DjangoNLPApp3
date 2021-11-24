@@ -10,3 +10,9 @@ django-heroku==0.3.1
 torch==1.8.1+cpu
 torchvision==0.9.1+cpu
 gdown==3.6.4
+fastbook==0.0.18
+requests==2.23.0
+fastai==2.5.3
+torchtext==0.6.0
+nlpaug==2.23.0
+nltk==3.2.5
