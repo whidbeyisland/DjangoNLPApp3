@@ -29,19 +29,36 @@ from string import punctuation
 from .forms import ImageUploadForm
 
 
-def download_all_models():
-    subs = subs = ['academic-humanities', 'academic-stem', 'anime', 'astrology', 'conservative', 'hippie-spiritual', 'kpop', 'lgbtq', 'liberal', 'sports', 'tech-nerd']
-
-    #coati: download the other 11 models here
-    #coati: check if they're already downloaded before doing it again, and add a "setting up..." thing
+def download_things(_url, _folder, _filename):
     path_cwd = os.getcwd()
-    path_models = 'static\\models'
-    url = 'https://drive.google.com/uc?id=1-E3NJgfZbGY9b-EIho_hy_-62feeHTDn'
-    output = os.path.join(path_cwd, path_models, 'nlpmodel3-academic-humanities.pkl')
+    output = os.path.join(path_cwd, 'static', _folder, _filename)
     #cwd is just the first pytorch-django folder...
 
     try:
-        gdown.download(url, str(output), quiet=False)
+        gdown.download(_url, str(output), quiet=False)
         return 'success!'
     except Exception as e:
         return e
+
+def download_all_models():
+    #coati: download the other 11 models here
+    #coati: check if they're already downloaded before doing it again, and add a "setting up..." thing
+
+    subs = subs = ['academic-humanities', 'academic-stem', 'anime', 'astrology', 'conservative', 'hippie-spiritual', 'kpop', 'lgbtq', 'liberal', 'sports', 'tech-nerd']
+
+    url = 'https://drive.google.com/uc?id=1-E3NJgfZbGY9b-EIho_hy_-62feeHTDn'
+    folder = 'models'
+    filename = 'nlpmodel3-academic-humanities.pkl'
+    download_things(url, folder, filename)
+
+def download_toks200():
+    url = 'https://drive.google.com/uc?id=1fx1HDjJ7O9Hryq6yu_AymzM5GtULcSWx'
+    folder = 'toks200'
+    filename = 'toks200-tweets.pkl'
+    download_things(url, folder, filename)
+
+def download_nums200():
+    url = 'https://drive.google.com/uc?id=1IgIcw_CRJQgdTo-Nn4sxk_g5Vd3xqiob'
+    folder = 'nums200'
+    filename = 'nums200-eachsub.pkl'
+    download_things(url, folder, filename)
