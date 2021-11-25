@@ -33,35 +33,42 @@ def get_tweet_prediction(account, topic):
     #coati: account will be person's name
     
     path_cwd = os.getcwd()
+    path_df = 'static\\dataframes'
+    path_dls = 'static\\dataloaders'
     path_models = 'static\\models'
-    
-
-
-
-
+    path_nums200 = 'static\\nums200'
+    path_toks200 = 'static\\toks200'
 
     #coati: go through and retool all this
-    path = Path("/content/gdrive/MyDrive/fastai_datasets/tweets-by-subculture")
     subs = ['academic-humanities', 'academic-stem', 'anime', 'astrology', 'conservative', 'hippie-spiritual', 'kpop', 'lgbtq', 'liberal', 'sports', 'tech-nerd']
     df_eachsub = []
-    for i in range(0, len(subs)):
-    df = None
-    newfolder = path/subs[i]
-    num = 0
-    docexists = True
-    while docexists == True:
-        num += 1
-        newpath = Path(newfolder/('tweets_extracted_' + '{:03d}'.format(num) + '.txt'))
-        if newpath.exists():
-        print('Reading ' + subs[i] + ' ' + str(num))
-        if df is None:
-            df = pd.read_csv(newpath, sep='\n', header=None)
-            df.columns = ['Tweet']
-        else:
-            df_new = pd.read_csv(newpath, sep='\n', header=None)
-            df_new.columns = ['Tweet']
-            df = df.append(df_new)
-        else:
-        docexists = False
-        df_eachsub.append(df)
-        print(df.shape)
+
+    try:
+        df_eachsub = torch.load(os.path.join(path_cwd, path_df, 'df_eachsub_tweets.pkl'))
+        return str(len(df_eachsub))
+    except Exception as e:
+        return e
+
+
+
+    # for i in range(0, len(subs)):
+    #     df = None
+    #     newfolder = os.path.join(path_df, subs[i])
+    #     num = 0
+    #     docexists = True
+    #     while docexists == True:
+    #         num += 1
+    #         newpath = os.path.join(newfolder, ('tweets_extracted_' + '{:03d}'.format(num) + '.txt'))
+    #         if newpath.exists():
+    #         print('Reading ' + subs[i] + ' ' + str(num))
+    #         if df is None:
+    #             df = pd.read_csv(newpath, sep='\n', header=None)
+    #             df.columns = ['Tweet']
+    #         else:
+    #             df_new = pd.read_csv(newpath, sep='\n', header=None)
+    #             df_new.columns = ['Tweet']
+    #             df = df.append(df_new)
+    #         else:
+    #         docexists = False
+    #         df_eachsub.append(df)
+    #         print(df.shape)
