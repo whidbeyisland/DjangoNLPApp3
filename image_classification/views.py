@@ -27,7 +27,7 @@ from nltk import FreqDist
 from string import punctuation
 
 from .forms import ImageUploadForm
-from .download_models import download_all_models
+from .download_pkls import download_all_models
 from .work_with_models import get_tweet_prediction
 
 
