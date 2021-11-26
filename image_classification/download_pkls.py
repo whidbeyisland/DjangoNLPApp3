@@ -27,7 +27,7 @@ from nltk import FreqDist
 from string import punctuation
 
 from .forms import ImageUploadForm
-from .work_with_models import *
+#from .work_with_models import *
 
 import pathlib
 posixpath_temp = pathlib.PosixPath
@@ -35,20 +35,19 @@ pathlib.PosixPath = pathlib.WindowsPath
 
 
 
-class DownloadPkls:
-    path_cwd = os.getcwd()
-    path_df = 'static\\dataframes'
-    path_dls = 'static\\dataloaders'
-    path_models = 'static\\models'
-    path_nums200 = 'static\\nums200'
-    path_toks200 = 'static\\toks200'
-    subs = ['academic-humanities', 'academic-stem', 'anime', 'astrology', 'conservative', 'hippie-spiritual', 'kpop', 'lgbtq', 'liberal', 'sports', 'tech-nerd']
+subs = ['academic-humanities', 'academic-stem', 'anime', 'astrology', 'conservative', 'hippie-spiritual', 'kpop', 'lgbtq', 'liberal', 'sports', 'tech-nerd']
+path_cwd = os.getcwd()
+path_df = 'static\\dataframes'
+path_dls = 'static\\dataloaders'
+path_models = 'static\\models'
+path_nums200 = 'static\\nums200'
+path_toks200 = 'static\\toks200'
 
+class DownloadPkls:
     def __init__(self):
         pass
 
-    def download_things(_url, _folder, _filename):
-        path_cwd = os.getcwd()
+    def download_things(self, _url, _folder, _filename):
         output = os.path.join(path_cwd, 'static', _folder, _filename)
         #cwd is just the first pytorch-django folder...
 
@@ -58,7 +57,7 @@ class DownloadPkls:
         except Exception as e:
             return e
 
-    def download_all_models():
+    def download_all_models(self):
         #coati: download the other 11 models here
         #coati: check if they're already downloaded before doing it again, and add a "setting up..." thing
 
@@ -68,7 +67,7 @@ class DownloadPkls:
         if not os.path.exists(os.path.join(path_cwd, path_models, filename)):
             download_things(url, folder, filename)
 
-    def download_toks200():
+    def download_toks200(self):
         url = 'https://drive.google.com/uc?id=1fx1HDjJ7O9Hryq6yu_AymzM5GtULcSWx'
         folder = 'toks200'
         filename = 'toks200-tweets.pkl'
@@ -76,7 +75,7 @@ class DownloadPkls:
             download_things(url, folder, filename)
 
 
-    def download_nums200():
+    def download_nums200(self):
         url = 'https://drive.google.com/uc?id=1IgIcw_CRJQgdTo-Nn4sxk_g5Vd3xqiob'
         folder = 'nums200'
         filename = 'nums200-eachsub.pkl'
