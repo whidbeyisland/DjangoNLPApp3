@@ -1,6 +1,5 @@
 from django import forms
 
 
-class ImageUploadForm(forms.Form):
+class TextEntryForm(forms.Form):
     prompt = forms.CharField()
-    image = forms.ImageField()

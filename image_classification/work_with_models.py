@@ -26,7 +26,7 @@ from nltk.corpus import wordnet
 from nltk import FreqDist
 from string import punctuation
 
-from .forms import ImageUploadForm
+from .forms import TextEntryForm
 from .download_pkls import *
 
 import pathlib
@@ -85,7 +85,7 @@ class WorkWithModels:
             print(str(len(self.txts_eachsub)))
         except Exception as e:
             print(e)
-        #coati: store txts_eachsub.pkl on drive so you can download it, currently the program has no way
+        #coati: TO DO................ store txts_eachsub.pkl on drive so you can download it, currently the program has no way
         #of creating it
 
         print('Loading toks200...')

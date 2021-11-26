@@ -26,7 +26,7 @@ from nltk.corpus import wordnet
 from nltk import FreqDist
 from string import punctuation
 
-from .forms import ImageUploadForm
+from .forms import TextEntryForm
 #from .work_with_models import *
 
 import pathlib
