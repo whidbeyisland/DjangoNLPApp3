@@ -66,9 +66,6 @@ class WorkWithModels:
 
     def get_assets_ready(self):
         #coati: account will be person's name
-
-        print('TEEEEEEEEEEEEEEEEEST')
-        #d = DownloadPkls()
         
         print('Loading dataframes...')
         try:
@@ -139,7 +136,9 @@ class WorkWithModels:
         N_SENTENCES = 4
         preds = [self.learn.predict(TEXT, N_WORDS, temperature=0.75) 
                 for _ in range(N_SENTENCES)]
+        print('-------------------------------------------')
         print("\n".join(preds))
+        print('-------------------------------------------')
 
 
     

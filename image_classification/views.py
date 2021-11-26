@@ -76,8 +76,11 @@ def index(request):
         form = ImageUploadForm(request.POST, request.FILES)
         if form.is_valid():
             # passing the image as base64 string to avoid storing it to DB or filesystem
+            prompt = form.cleaned_data['prompt']
             image = form.cleaned_data['image']
             image_bytes = image.file.read()
+
+            print('TEEEEEEEEEEEEEEEEEST...1 ' + prompt)
 
             #coati: handle the stuff for your own model here
 
@@ -92,6 +95,7 @@ def index(request):
                 d = DownloadPkls()
                 w = WorkWithModels(d)
                 w.get_assets_ready()
+                w.get_tweet_prediction(prompt)
                 w.get_tweet_prediction('testuser', 'People from ancient Mesopotamia')
                 w.get_tweet_prediction('testuser', 'Japan is a nation')
                 w.get_tweet_prediction('testuser', 'Homophobia')
