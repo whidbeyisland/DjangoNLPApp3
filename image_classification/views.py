@@ -27,8 +27,8 @@ from nltk import FreqDist
 from string import punctuation
 
 from .forms import ImageUploadForm
-from .download_pkls import download_all_models
-from .work_with_models import get_tweet_prediction
+from .download_pkls import *
+from .work_with_models import *
 
 
 # PyTorch-related code from: https://pytorch.org/tutorials/intermediate/flask_rest_api_tutorial.html
@@ -88,7 +88,14 @@ def index(request):
                 #racc
                 #predicted_label = get_prediction(image_bytes)
                 #predicted_label = download_all_models()
-                predicted_label = get_tweet_prediction('test', 'fruit')
+                #predicted_label = get_tweet_prediction('test', 'fruit')
+                w = WorkWithModels()
+                w.get_assets_ready()
+                w.get_tweet_prediction('testuser', 'People from ancient Mesopotamia')
+                w.get_tweet_prediction('testuser', 'Japan is a nation')
+                w.get_tweet_prediction('testuser', 'Homophobia')
+                w.get_tweet_prediction('testuser', 'It is highly disappointing that')
+                predicted_label = 'success!'
 
             except RuntimeError as re:
                 #racc
