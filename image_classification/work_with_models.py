@@ -3,20 +3,21 @@ import io
 import json
 import os
 import gdown
-import fastbook
-fastbook.setup_book()
+#import fastbook
+#fastbook.setup_book()
 import fastai
 import pandas as pd
 import requests
 import torchtext
 import nltk
+import snscrape.modules.twitter as sntwitter
 
 from torchvision import models
 from torchvision import transforms
 from PIL import Image
 from django.shortcuts import render
 from django.conf import settings
-from fastbook import *
+#from fastbook import *
 from torchtext.data import get_tokenizer
 from fastai.text.all import *
 #from pathlib import Path
@@ -42,7 +43,8 @@ path_dls = 'static\\dataloaders'
 path_models = 'static\\models'
 path_nums200 = 'static\\nums200'
 path_toks200 = 'static\\toks200'
-max_tweets = 2000
+path_tweets = 'static\\tweets'
+max_tweets = 300
 
 def get_tweets(df):
     return L(df.iloc[i, 0] for i in range(0, df.shape[0]))
@@ -134,7 +136,31 @@ class WorkWithModels:
     def download_user_tweets(self, username):
         print('Downloading tweets by user ' + username + '...')
         #COATI: USE OTHER VERSION OF SNSCRAPE
-        #os.system('snscrape --max-results ' + str(max_tweets) + ' --jsonl twitter-user ' + username + ' >tweets-by-user-' + username + '.txt')
+
+        # importing libraries and packages
+
+        # Creating list to append tweet data 
+        tweets_list = []
+
+        # Using TwitterSearchScraper to scrape data and append tweets to list
+        for i,tweet in enumerate(sntwitter.TwitterSearchScraper('from:' + username).get_items()): #declare a username 
+            if i > max_tweets: #number of tweets you want to scrape
+                break
+            tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username]) #declare the attributes to be returned
+            
+        # Creating a dataframe from the tweets list above 
+        tweets_df = pd.DataFrame(tweets_list, columns=['Datetime', 'Tweet Id', 'Text', 'Username'])
+        print(tweets_df.iloc[0,:])
+        print(tweets_df.iloc[1,:])
+        tweets_df.to_csv(username + '-tweets.txt')
+
+        # scraper = snscrape.modules.twitter.TwitterUserScraper('textfiles')
+        # for tweet in scraper.get_items():
+        #     print(tweet.user.username)
+        #     print(tweet.date)
+        #     print(tweet.content)
+
+        #os.system('snscrape --max-results ' + str(max_tweets) + ' twitter-user ' + username + ' >tweets-by-user-' + username + '.txt')
 
     def get_tweet_prediction(self, username, topic):
         TEXT = topic

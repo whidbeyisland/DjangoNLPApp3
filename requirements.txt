@@ -4,16 +4,19 @@ whitenoise==5.2.0
 gunicorn==20.0.4
 django-heroku==0.3.1
 # must have GPU version of torch and torchvision for NLP computations
-torch==1.7.1+cu110
+torch==1.7.1+cu110 #<----------------- here
 torchvision===0.8.2+cu110
 torchaudio===0.7.2
+# pip install torch==1.7.0+cu110 torchvision==0.8.1+cu110 torchaudio===0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
 gdown==3.6.4
-fastbook==0.0.18
+#fastbook==0.0.18
 requests==2.23.0
 fastai==2.5.3
 torchtext==0.6.0
-nlpaug==2.23.0
+nlpaug==1.1.8 #2.23.0
 nltk==3.2.5
 spacy==2.2.4
 lxml==4.6.4
-snscrape==0.3.4
+# must install development version of snscrape for extracting attributes from tweets:
+## pip3 install git+https://github.com/JustAnotherArchivist/snscrape.git
+# python==3.8.0

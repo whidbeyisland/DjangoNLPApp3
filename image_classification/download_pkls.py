@@ -3,8 +3,8 @@ import io
 import json
 import os
 import gdown
-import fastbook
-fastbook.setup_book()
+#import fastbook
+#fastbook.setup_book()
 import fastai
 import pandas as pd
 import requests
@@ -16,7 +16,7 @@ from torchvision import transforms
 from PIL import Image
 from django.shortcuts import render
 from django.conf import settings
-from fastbook import *
+#from fastbook import *
 from torchtext.data import get_tokenizer
 from fastai.text.all import *
 #from pathlib import Path
