@@ -43,7 +43,7 @@ path_dls = 'static\\dataloaders'
 path_models = 'static\\models'
 path_nums200 = 'static\\nums200'
 path_toks200 = 'static\\toks200'
-path_tweets = 'static\\tweets'
+path_tweets = 'static\\tweets-by-user'
 max_tweets = 300
 
 def get_tweets(df):
@@ -146,13 +146,13 @@ class WorkWithModels:
         for i,tweet in enumerate(sntwitter.TwitterSearchScraper('from:' + username).get_items()): #declare a username 
             if i > max_tweets: #number of tweets you want to scrape
                 break
-            tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username]) #declare the attributes to be returned
-            
+            tweets_list.append([tweet.content]) #declare the attributes to be returned
+            #racc: tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username])
+
         # Creating a dataframe from the tweets list above 
-        tweets_df = pd.DataFrame(tweets_list, columns=['Datetime', 'Tweet Id', 'Text', 'Username'])
-        print(tweets_df.iloc[0,:])
-        print(tweets_df.iloc[1,:])
-        tweets_df.to_csv(username + '-tweets.txt')
+        tweets_df = pd.DataFrame(tweets_list, columns=['Content'])
+        #print(tweets_df.iloc[0:10,:])
+        tweets_df.to_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'))
 
         # scraper = snscrape.modules.twitter.TwitterUserScraper('textfiles')
         # for tweet in scraper.get_items():
@@ -171,7 +171,5 @@ class WorkWithModels:
         print('-------------------------------------------')
         print("\n".join(preds))
         print('-------------------------------------------')
-
-        #test
     
 #return 'got to end'
