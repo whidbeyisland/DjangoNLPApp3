@@ -36,19 +36,24 @@ def index(request):
     if request.method == 'POST':
         form = TextEntryForm(request.POST, request.FILES)
         if form.is_valid():
+            username = form.cleaned_data['username']
             prompt = form.cleaned_data['prompt']
             print('TEEEEEEEEEEEEEEEEEST...1 ' + prompt)
 
             try:
                 d = DownloadPkls()
                 w = WorkWithModels(d)
-                w.get_assets_ready()
-                w.get_tweet_prediction('testuser', prompt)
-                w.get_tweet_prediction('testuser', 'People from ancient Mesopotamia')
-                w.get_tweet_prediction('testuser', 'Japan is a nation')
-                w.get_tweet_prediction('testuser', 'Homophobia')
-                w.get_tweet_prediction('testuser', 'It is highly disappointing that')
-                predicted_label = 'success!'
+                w.download_user_tweets(username)
+                # d = DownloadPkls()
+                # w = WorkWithModels(d)
+                # w.get_assets_ready()
+                # w.download_user_tweets(username)
+                # w.get_tweet_prediction(username, prompt)
+                # w.get_tweet_prediction(username, 'People from ancient Mesopotamia')
+                # w.get_tweet_prediction(username, 'Japan is a nation')
+                # w.get_tweet_prediction(username, 'Homophobia')
+                # w.get_tweet_prediction(username, 'It is highly disappointing that')
+                # predicted_label = 'success!'
 
             except RuntimeError as re:
                 predicted_label = re

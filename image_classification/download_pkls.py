@@ -74,7 +74,6 @@ class DownloadPkls:
         if not os.path.exists(os.path.join(path_cwd, path_toks200, filename)):
             download_things(url, folder, filename)
 
-
     def download_nums200(self):
         url = 'https://drive.google.com/uc?id=1IgIcw_CRJQgdTo-Nn4sxk_g5Vd3xqiob'
         folder = 'nums200'

@@ -42,6 +42,7 @@ path_dls = 'static\\dataloaders'
 path_models = 'static\\models'
 path_nums200 = 'static\\nums200'
 path_toks200 = 'static\\toks200'
+max_tweets = 2000
 
 def get_tweets(df):
     return L(df.iloc[i, 0] for i in range(0, df.shape[0]))
@@ -129,8 +130,13 @@ class WorkWithModels:
             print('Loaded')
         except Exception as e:
             print(e)
+        
+    def download_user_tweets(self, username):
+        print('Downloading tweets by user ' + username + '...')
+        #COATI: USE OTHER VERSION OF SNSCRAPE
+        #os.system('snscrape --max-results ' + str(max_tweets) + ' --jsonl twitter-user ' + username + ' >tweets-by-user-' + username + '.txt')
 
-    def get_tweet_prediction(self, account, topic):
+    def get_tweet_prediction(self, username, topic):
         TEXT = topic
         N_WORDS = 40
         N_SENTENCES = 4
