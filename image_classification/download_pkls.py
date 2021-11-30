@@ -87,13 +87,13 @@ class DownloadPkls:
     def download_dls_c(self):
         url = 'https://drive.google.com/uc?id=1FITUFGf7BVi_-H8kITmiq5nxxGf8nSNs'
         folder = 'dataloaders'
-        filename = 'dls-nlp-c.pkl'
+        filename = 'dls-nlp-clas.pkl'
         if not os.path.exists(os.path.join(path_cwd, path_dls, filename)):
             self.download_things(url, folder, filename)
     
     def download_learn_c(self):
-        url = 'https://drive.google.com/uc?id=1--_ijBtd3aPabH3GsPcwblAkVQ3zzHdU'
+        url = 'https://drive.google.com/uc?id=1--klli_jg1i5OvDHKyfkkFyypuQuLCK-'
         folder = 'models'
-        filename = 'nlpmodel3_c.pkl'
+        filename = 'nlpmodel3_clas.pkl'
         if not os.path.exists(os.path.join(path_cwd, path_models, filename)):
             self.download_things(url, folder, filename)

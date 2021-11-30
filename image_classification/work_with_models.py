@@ -11,6 +11,7 @@ import requests
 import torchtext
 import nltk
 import snscrape.modules.twitter as sntwitter
+from copy import deepcopy
 
 from torchvision import models
 from torchvision import transforms
@@ -20,7 +21,6 @@ from django.conf import settings
 #from fastbook import *
 from torchtext.data import get_tokenizer
 from fastai.text.all import *
-#from pathlib import Path
 
 nltk.download('wordnet')
 from nltk.corpus import wordnet
@@ -108,16 +108,25 @@ class WorkWithModels:
         print('Loading dataloaders...')
         try:
             self.d.download_dls_c()
-            self.dls_c = torch.load(os.path.join(path_cwd, path_dls, 'dls-nlp-c.pkl'))
+            self.dls_c = torch.load(os.path.join(path_cwd, path_dls, 'dls-nlp-clas.pkl'))
         except Exception as e:
             print(e)
         
         print('Loading learners...')
         try:
+            print('Attempt 1')
             self.d.download_learn_c()
-            self.learn_c = torch.load(os.path.join(path_cwd, path_models, 'nlpmodel3_c.pkl'))
+            self.learn_c = torch.load(os.path.join(path_cwd, path_models, 'nlpmodel3_clas.pkl'))
         except Exception as e:
             print(e)
+            try:
+                print('Attempt 2')
+                self.learn_c = text_classifier_learner(self.dls_c, AWD_LSTM, drop_mult = 0.5, metrics = accuracy).to_fp16()
+                #self.learn_c.path = Path(str(os.path.join(path_cwd, path_models)))
+                self.learn_c.path = Path(str(path_cwd))
+                self.learn_c = self.learn_c.load('nlpmodel3_clas')
+            except Exception as e:
+                print(e)
         
         print('Success!')
 
@@ -213,8 +222,10 @@ class WorkWithModels:
     def categorize_user(self, username):
         try:
             self.download_user_tweets(username)
-            df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), error_bad_lines=False)
+            df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), index_col=0)
+            df_user.columns = ['Content']
             print(df_user.shape)
+            #print(df_user.head)
         except Exception as e:
             print(e)
         
@@ -227,9 +238,8 @@ class WorkWithModels:
         preds_each_tweet = []
         for i in range(0, len(first100tweets)):
             print('Analyzing tweet #', i)
-            preds_this_tweet = self.learn_c.predict(first100tweets[i])
+            preds_this_tweet = self.learn_c.predict(first100tweets[i])[2]
             print(preds_this_tweet)
-            #coati: leaving off here, figure out why this is just printing the tweets instead of the preds
             preds_each_tweet.append(preds_this_tweet)
         all_preds_each_categ = torch.stack(preds_each_tweet)
 
@@ -243,7 +253,7 @@ class WorkWithModels:
             preds_overall_each_categ.append(pred_overall_this_categ)
 
         #sorting these overall predictions from most to least likely
-        preds_overall_each_categ_sorted = copy.deepcopy(preds_overall_each_categ)
+        preds_overall_each_categ_sorted = deepcopy(preds_overall_each_categ)
         preds_overall_each_categ_sorted.sort(reverse=True)
 
         for i in range(0, len(preds_overall_each_categ_sorted)):
