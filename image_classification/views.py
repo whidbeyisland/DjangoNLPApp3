@@ -45,6 +45,7 @@ def index(request):
                 w = WorkWithModels(d)
                 # w.download_user_tweets(username)
                 w.get_categorization_assets_ready()
+                w.categorize_user(username)
                 # w.get_generation_assets_ready()
                 # w.download_user_tweets(username)
                 # w.get_tweet_prediction(username, prompt)

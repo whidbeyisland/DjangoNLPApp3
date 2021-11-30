@@ -45,6 +45,7 @@ path_nums200 = 'static\\nums200'
 path_toks200 = 'static\\toks200'
 path_tweets = 'static\\tweets-by-user'
 max_tweets = 300
+tweets_to_analyze = 100
 
 def get_tweets(df):
     return L(df.iloc[i, 0] for i in range(0, df.shape[0]))
@@ -55,7 +56,8 @@ def subword(sz):
     return ' '.join(first(sp([txt]))[:40])
 
 class WorkWithModels: 
-    d = None  
+    d = None
+
     df_eachsub = []
     tkn_eachsub = []
     txts_eachsub = []
@@ -63,10 +65,13 @@ class WorkWithModels:
     nums200_eachsub = []
     dls_eachsub = []
     learn = None
+
     df_c = None
     tkn_c = None
     toks200_c = None
     nums200_c = None
+    dls_c = None
+    learn_c = None
 
     def __init__(self, d):
         self.d = d
@@ -88,19 +93,36 @@ class WorkWithModels:
 
         print('Loading toks200...')
         try:
+            #COATI: host this online so you can download it, currently it has no way of getting to the project
             self.toks200_c = torch.load(os.path.join(path_cwd, path_toks200, 'toks200_c.pkl'))
         except Exception as e:
             print(e)
 
         print('Loading nums200...')
         try:
+            #COATI: host this online so you can download it, currently it has no way of getting to the project
             self.nums200_c = torch.load(os.path.join(path_cwd, path_nums200, 'nums200_c.pkl'))
         except Exception as e:
             print(e)
 
-        print('Got here')
+        print('Loading dataloaders...')
+        try:
+            self.d.download_dls_c()
+            self.dls_c = torch.load(os.path.join(path_cwd, path_dls, 'dls-nlp-c.pkl'))
+        except Exception as e:
+            print(e)
+        
+        print('Loading learners...')
+        try:
+            self.d.download_learn_c()
+            self.learn_c = torch.load(os.path.join(path_cwd, path_models, 'nlpmodel3_c.pkl'))
+        except Exception as e:
+            print(e)
+        
+        print('Success!')
 
     def get_generation_assets_ready(self):
+        print(self.d.testfunc())
         print('Getting assets for tweet generation, hang tight................')
         print('Loading dataframes...')
         try:
@@ -187,6 +209,47 @@ class WorkWithModels:
         #     print(tweet.content)
 
         #os.system('snscrape --max-results ' + str(max_tweets) + ' twitter-user ' + username + ' >tweets-by-user-' + username + '.txt')
+
+    def categorize_user(self, username):
+        try:
+            self.download_user_tweets(username)
+            df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), error_bad_lines=False)
+            print(df_user.shape)
+        except Exception as e:
+            print(e)
+        
+        first100tweets = df_user.loc[:100, 'Content']
+        #first100tweets = df_user.iloc[0:tweets_to_analyze,0]
+        print(first100tweets.shape)
+        print(first100tweets[0])
+
+        #predictions of subculture for each tweet
+        preds_each_tweet = []
+        for i in range(0, len(first100tweets)):
+            print('Analyzing tweet #', i)
+            preds_this_tweet = self.learn_c.predict(first100tweets[i])
+            print(preds_this_tweet)
+            #coati: leaving off here, figure out why this is just printing the tweets instead of the preds
+            preds_each_tweet.append(preds_this_tweet)
+        all_preds_each_categ = torch.stack(preds_each_tweet)
+
+        df_preds = pd.DataFrame(all_preds_each_categ.numpy())
+        df_preds.columns = subs
+
+        #predictions of subculture for all of the user's tweets
+        preds_overall_each_categ = []
+        for i in range(0, len(subs)):
+            pred_overall_this_categ = df_preds[subs[i]].mean()
+            preds_overall_each_categ.append(pred_overall_this_categ)
+
+        #sorting these overall predictions from most to least likely
+        preds_overall_each_categ_sorted = copy.deepcopy(preds_overall_each_categ)
+        preds_overall_each_categ_sorted.sort(reverse=True)
+
+        for i in range(0, len(preds_overall_each_categ_sorted)):
+            cur_pred = preds_overall_each_categ_sorted[i]
+            orig_index_of_pred = preds_overall_each_categ.index(cur_pred)
+            print('Likelihood of being in group ' + subs[orig_index_of_pred] + ': ' + str(cur_pred))
 
     def get_tweet_prediction(self, username, topic):
         TEXT = topic
