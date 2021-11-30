@@ -63,13 +63,45 @@ class WorkWithModels:
     nums200_eachsub = []
     dls_eachsub = []
     learn = None
+    df_c = None
+    tkn_c = None
+    toks200_c = None
+    nums200_c = None
 
     def __init__(self, d):
         self.d = d
+    
+    def get_categorization_assets_ready(self):
+        print('Getting assets for categorization, hang tight................')
+        print('Loading dataframes...')
+        try:
+            self.df_c = torch.load(os.path.join(path_cwd, path_df, 'df_categorize.pkl'))
+        except Exception as e:
+            print(e)
 
-    def get_assets_ready(self):
-        #coati: account will be person's name
-        
+        spacy = WordTokenizer()
+        tkn = Tokenizer(spacy)
+        self.tkn_c = tkn
+
+        print('Loading txts...')
+        self.txts_c = L(self.df_c.iloc[i, 0] for i in range(0, self.df_c.shape[0]))
+
+        print('Loading toks200...')
+        try:
+            self.toks200_c = torch.load(os.path.join(path_cwd, path_toks200, 'toks200_c.pkl'))
+        except Exception as e:
+            print(e)
+
+        print('Loading nums200...')
+        try:
+            self.nums200_c = torch.load(os.path.join(path_cwd, path_nums200, 'nums200_c.pkl'))
+        except Exception as e:
+            print(e)
+
+        print('Got here')
+
+    def get_generation_assets_ready(self):
+        print('Getting assets for tweet generation, hang tight................')
         print('Loading dataframes...')
         try:
             self.df_eachsub = torch.load(os.path.join(path_cwd, path_df, 'df_eachsub_tweets.pkl'))
@@ -135,21 +167,15 @@ class WorkWithModels:
         
     def download_user_tweets(self, username):
         print('Downloading tweets by user ' + username + '...')
-        #COATI: USE OTHER VERSION OF SNSCRAPE
 
-        # importing libraries and packages
-
-        # Creating list to append tweet data 
         tweets_list = []
 
-        # Using TwitterSearchScraper to scrape data and append tweets to list
         for i,tweet in enumerate(sntwitter.TwitterSearchScraper('from:' + username).get_items()): #declare a username 
-            if i > max_tweets: #number of tweets you want to scrape
+            if i > max_tweets:
                 break
-            tweets_list.append([tweet.content]) #declare the attributes to be returned
+            tweets_list.append([tweet.content])
             #racc: tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username])
-
-        # Creating a dataframe from the tweets list above 
+ 
         tweets_df = pd.DataFrame(tweets_list, columns=['Content'])
         #print(tweets_df.iloc[0:10,:])
         tweets_df.to_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'))

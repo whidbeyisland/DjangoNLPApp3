@@ -43,10 +43,9 @@ def index(request):
             try:
                 d = DownloadPkls()
                 w = WorkWithModels(d)
-                w.download_user_tweets(username)
-                # d = DownloadPkls()
-                # w = WorkWithModels(d)
-                # w.get_assets_ready()
+                # w.download_user_tweets(username)
+                w.get_categorization_assets_ready()
+                # w.get_generation_assets_ready()
                 # w.download_user_tweets(username)
                 # w.get_tweet_prediction(username, prompt)
                 # w.get_tweet_prediction(username, 'People from ancient Mesopotamia')

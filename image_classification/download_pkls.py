@@ -80,3 +80,10 @@ class DownloadPkls:
         filename = 'nums200-eachsub.pkl'
         if not os.path.exists(os.path.join(path_cwd, path_nums200, filename)):
             download_things(url, folder, filename)
+    
+    # def download_toks200_c(self):
+    #     url = 'https://drive.google.com/uc?id=1fx1HDjJ7O9Hryq6yu_AymzM5GtULcSWx'
+    #     folder = 'toks200'
+    #     filename = 'toks200-tweets.pkl'
+    #     if not os.path.exists(os.path.join(path_cwd, path_toks200, filename)):
+    #         download_things(url, folder, filename)
