@@ -30,6 +30,8 @@ from .forms import TextEntryForm
 from .download_pkls import *
 from .work_with_models import *
 
+
+
 def index(request):
     predicted_label = None
 
@@ -45,15 +47,15 @@ def index(request):
                 w = WorkWithModels(d)
                 # w.download_user_tweets(username)
                 w.get_categorization_assets_ready()
-                w.categorize_user_2(username)
-                # w.get_generation_assets_ready()
+                w.get_generation_assets_ready()
+                subs_to_generate = w.categorize_user(username)
                 # w.download_user_tweets(username)
-                # w.get_tweet_prediction(username, prompt)
-                # w.get_tweet_prediction(username, 'People from ancient Mesopotamia')
-                # w.get_tweet_prediction(username, 'Japan is a nation')
-                # w.get_tweet_prediction(username, 'Homophobia')
-                # w.get_tweet_prediction(username, 'It is highly disappointing that')
-                # predicted_label = 'success!'
+                w.get_tweet_prediction(username, prompt)
+                w.get_tweet_prediction(username, 'People from ancient Mesopotamia')
+                w.get_tweet_prediction(username, 'Japan is a nation')
+                w.get_tweet_prediction(username, 'Homophobia')
+                w.get_tweet_prediction(username, 'It is highly disappointing that')
+                predicted_label = 'success!'
 
             except RuntimeError as re:
                 predicted_label = re

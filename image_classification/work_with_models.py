@@ -46,6 +46,7 @@ path_toks200 = 'static\\toks200'
 path_tweets = 'static\\tweets-by-user'
 max_tweets = 300
 tweets_to_analyze = 100
+num_to_return = 3
 
 def get_tweets(df):
     return L(df.iloc[i, 0] for i in range(0, df.shape[0]))
@@ -72,6 +73,8 @@ class WorkWithModels:
     nums200_c = None
     dls_c = None
     learn_c = None
+
+    subs_eachuser = []
 
     def __init__(self, d):
         self.d = d
@@ -216,6 +219,8 @@ class WorkWithModels:
         #os.system('snscrape --max-results ' + str(max_tweets) + ' twitter-user ' + username + ' >tweets-by-user-' + username + '.txt')
 
     def categorize_user(self, username):
+        subs_thisuser = []
+
         try:
             self.download_user_tweets(username)
             df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), index_col=0)
@@ -247,8 +252,15 @@ class WorkWithModels:
                 cur_pred = preds_overall_each_categ_sorted[i]
                 orig_index_of_pred = preds_overall_each_categ.index(cur_pred)
                 print('Likelihood of being in group ' + subs[orig_index_of_pred] + ': ' + str(cur_pred))
+
+                #coati: currently just returning top 3 categories --- can make this mechanism more complex later
+                if i < num_to_return:
+                    subs_thisuser.append(subs[orig_index_of_pred])
         except Exception as e:
             print(e)
+        
+        subs_eachuser[username] = subs_thisuser
+        #coati: save this somewhere
 
     def get_tweet_prediction(self, username, topic):
         TEXT = topic
