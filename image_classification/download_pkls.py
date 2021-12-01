@@ -42,6 +42,19 @@ path_dls = 'static\\dataloaders'
 path_models = 'static\\models'
 path_nums200 = 'static\\nums200'
 path_toks200 = 'static\\toks200'
+urls_eachsub = {
+    'academic-humanities': 'https://drive.google.com/uc?id=1-E3NJgfZbGY9b-EIho_hy_-62feeHTDn',
+    'academic-stem': 'https://drive.google.com/uc?1--FLwQk8WLMsSPsr9A0NuHeJlXEwwjOL',
+    'anime': 'https://drive.google.com/uc?id=1-2DtyFH5lY0i4Kr951BKflG-wirCzdxT',
+    'astrology': 'https://drive.google.com/uc?id=102vZq6dnVG7gm5-yE8pvNflg2QqFmauz',
+    'conservative': 'https://drive.google.com/uc?id=1-2On6tehSC6e0T0ottO8lWvfMCAe8gte',
+    'hippie-spiritual': 'https://drive.google.com/uc?id=1-AsDJOOT4z7Mt3skW2ChN9xEhaSjbNf-',
+    'kpop': 'https://drive.google.com/uc?id=1-0G-pBBawaVOf0GA2B5Vteq-I03Gy42V',
+    'lgbtq': 'https://drive.google.com/uc?id=1-E4-ZUmJihYV9WJ5kwMUfyFzUKastebG',
+    'liberal': 'https://drive.google.com/uc?id=1-Nbt8JWrgXBEkF3fceRkrPReGQefmM-7',
+    'sports': 'https://drive.google.com/uc?id=1-Qb3USg32mQoWOi4nu1YnebxBfLJjSUN',
+    'tech-nerd': 'https://drive.google.com/uc?id=1-7mnZi970TGltEe26oiTC4hRvV_DA-km'
+}
 
 class DownloadPkls:
     def __init__(self):
@@ -61,14 +74,12 @@ class DownloadPkls:
             return e
 
     def download_all_models(self):
-        #coati: download the other 11 models here
-        #coati: check if they're already downloaded before doing it again, and add a "setting up..." thing
-
-        url = 'https://drive.google.com/uc?id=1-E3NJgfZbGY9b-EIho_hy_-62feeHTDn'
-        folder = 'models'
-        filename = 'nlpmodel3-academic-humanities.pkl'
-        if not os.path.exists(os.path.join(path_cwd, path_models, filename)):
-            download_things(url, folder, filename)
+        for i in range(0, len(subs)):
+            url = urls_eachsub[subs[i]]
+            folder = 'models'
+            filename = 'nlpmodel3-' + subs[i] + '.pkl'
+            if not os.path.exists(os.path.join(path_cwd, path_models, filename)):
+                self.download_things(url, folder, filename)
 
     def download_toks200(self):
         url = 'https://drive.google.com/uc?id=1fx1HDjJ7O9Hryq6yu_AymzM5GtULcSWx'

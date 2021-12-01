@@ -184,6 +184,7 @@ class WorkWithModels:
         print('Loading learners...')
         #learn_eachsub = []
         try:
+            self.d.download_all_models()
             filename = 'nlpmodel3-academic-humanities.pkl'
             self.learn = torch.load(os.path.join(path_cwd, path_models, filename))
             #, map_location=torch.device('cpu')
