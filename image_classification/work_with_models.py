@@ -91,19 +91,19 @@ class WorkWithModels:
         print('Loading txts...')
         self.txts_c = L(self.df_c.iloc[i, 0] for i in range(0, self.df_c.shape[0]))
 
-        print('Loading toks200...')
-        try:
-            #COATI: host this online so you can download it, currently it has no way of getting to the project
-            self.toks200_c = torch.load(os.path.join(path_cwd, path_toks200, 'toks200_c.pkl'))
-        except Exception as e:
-            print(e)
+        # print('Loading toks200...')
+        # try:
+        #     #COATI: host this online so you can download it, currently it has no way of getting to the project
+        #     self.toks200_c = torch.load(os.path.join(path_cwd, path_toks200, 'toks200_c.pkl'))
+        # except Exception as e:
+        #     print(e)
 
-        print('Loading nums200...')
-        try:
-            #COATI: host this online so you can download it, currently it has no way of getting to the project
-            self.nums200_c = torch.load(os.path.join(path_cwd, path_nums200, 'nums200_c.pkl'))
-        except Exception as e:
-            print(e)
+        # print('Loading nums200...')
+        # try:
+        #     #COATI: host this online so you can download it, currently it has no way of getting to the project
+        #     self.nums200_c = torch.load(os.path.join(path_cwd, path_nums200, 'nums200_c.pkl'))
+        # except Exception as e:
+        #     print(e)
 
         print('Loading dataloaders...')
         try:
@@ -114,19 +114,15 @@ class WorkWithModels:
         
         print('Loading learners...')
         try:
-            print('Attempt 1')
-            self.d.download_learn_c()
-            self.learn_c = torch.load(os.path.join(path_cwd, path_models, 'nlpmodel3_clas.pkl'))
+            print('Attempt 2')
+            self.d.download_learn_c_pth()
+            self.learn_c = text_classifier_learner(self.dls_c, AWD_LSTM, drop_mult = 0.5, metrics = accuracy).to_fp16()
+            #self.learn_c.path = Path(str(os.path.join(path_cwd, path_models)))
+            self.learn_c.path = Path(str(path_cwd))/'static'
+            #self.learn_c.path = Path(str(path_cwd)/'static')
+            self.learn_c = self.learn_c.load('nlpmodel3_clas')
         except Exception as e:
             print(e)
-            try:
-                print('Attempt 2')
-                self.learn_c = text_classifier_learner(self.dls_c, AWD_LSTM, drop_mult = 0.5, metrics = accuracy).to_fp16()
-                #self.learn_c.path = Path(str(os.path.join(path_cwd, path_models)))
-                self.learn_c.path = Path(str(path_cwd))
-                self.learn_c = self.learn_c.load('nlpmodel3_clas')
-            except Exception as e:
-                print(e)
         
         print('Success!')
 
@@ -224,42 +220,35 @@ class WorkWithModels:
             self.download_user_tweets(username)
             df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), index_col=0)
             df_user.columns = ['Content']
-            print(df_user.shape)
-            #print(df_user.head)
+            first100tweets = df_user.loc[0:tweets_to_analyze, 'Content']
+
+            preds_each_tweet = []
+            for i in range(0, tweets_to_analyze):
+                print('Analyzing tweet #', i)
+                preds_this_tweet = self.learn_c.predict(df_user.loc[i, 'Content'])[2]
+                print(preds_this_tweet)
+                preds_each_tweet.append(preds_this_tweet)
+            all_preds_each_categ = torch.stack(preds_each_tweet)
+
+            df_preds = pd.DataFrame(all_preds_each_categ.numpy())
+            df_preds.columns = subs
+
+            #predictions of subculture for all of the user's tweets
+            preds_overall_each_categ = []
+            for i in range(0, len(subs)):
+                pred_overall_this_categ = df_preds[subs[i]].mean()
+                preds_overall_each_categ.append(pred_overall_this_categ)
+
+            #sorting these overall predictions from most to least likely
+            preds_overall_each_categ_sorted = deepcopy(preds_overall_each_categ)
+            preds_overall_each_categ_sorted.sort(reverse=True)
+
+            for i in range(0, len(preds_overall_each_categ_sorted)):
+                cur_pred = preds_overall_each_categ_sorted[i]
+                orig_index_of_pred = preds_overall_each_categ.index(cur_pred)
+                print('Likelihood of being in group ' + subs[orig_index_of_pred] + ': ' + str(cur_pred))
         except Exception as e:
             print(e)
-        
-        first100tweets = df_user.loc[:100, 'Content']
-        #first100tweets = df_user.iloc[0:tweets_to_analyze,0]
-        print(first100tweets.shape)
-        print(first100tweets[0])
-
-        #predictions of subculture for each tweet
-        preds_each_tweet = []
-        for i in range(0, len(first100tweets)):
-            print('Analyzing tweet #', i)
-            preds_this_tweet = self.learn_c.predict(first100tweets[i])[2]
-            print(preds_this_tweet)
-            preds_each_tweet.append(preds_this_tweet)
-        all_preds_each_categ = torch.stack(preds_each_tweet)
-
-        df_preds = pd.DataFrame(all_preds_each_categ.numpy())
-        df_preds.columns = subs
-
-        #predictions of subculture for all of the user's tweets
-        preds_overall_each_categ = []
-        for i in range(0, len(subs)):
-            pred_overall_this_categ = df_preds[subs[i]].mean()
-            preds_overall_each_categ.append(pred_overall_this_categ)
-
-        #sorting these overall predictions from most to least likely
-        preds_overall_each_categ_sorted = deepcopy(preds_overall_each_categ)
-        preds_overall_each_categ_sorted.sort(reverse=True)
-
-        for i in range(0, len(preds_overall_each_categ_sorted)):
-            cur_pred = preds_overall_each_categ_sorted[i]
-            orig_index_of_pred = preds_overall_each_categ.index(cur_pred)
-            print('Likelihood of being in group ' + subs[orig_index_of_pred] + ': ' + str(cur_pred))
 
     def get_tweet_prediction(self, username, topic):
         TEXT = topic

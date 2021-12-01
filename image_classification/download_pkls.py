@@ -90,10 +90,10 @@ class DownloadPkls:
         filename = 'dls-nlp-clas.pkl'
         if not os.path.exists(os.path.join(path_cwd, path_dls, filename)):
             self.download_things(url, folder, filename)
-    
-    def download_learn_c(self):
-        url = 'https://drive.google.com/uc?id=1--klli_jg1i5OvDHKyfkkFyypuQuLCK-'
+
+    def download_learn_c_pth(self):
+        url = 'https://drive.google.com/uc?id=1mVSE6pLnItsEiNQ3gCLyxJcLA37bWzfW'
         folder = 'models'
-        filename = 'nlpmodel3_clas.pkl'
+        filename = 'nlpmodel3_clas.pth'
         if not os.path.exists(os.path.join(path_cwd, path_models, filename)):
             self.download_things(url, folder, filename)
