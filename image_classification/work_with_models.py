@@ -65,7 +65,8 @@ class WorkWithModels:
     toks200_eachsub = []
     nums200_eachsub = []
     dls_eachsub = []
-    learn = None
+    learn_eachsub = []
+    #learn = None
 
     df_c = None
     tkn_c = None
@@ -74,7 +75,7 @@ class WorkWithModels:
     dls_c = None
     learn_c = None
 
-    subs_eachuser = []
+    subs_eachuser = dict()
 
     def __init__(self, d):
         self.d = d
@@ -178,15 +179,16 @@ class WorkWithModels:
             print(str(len(self.dls_eachsub)))
         except Exception as e:
             print(e)
-        
-        #coati: for now just doing 1 learner, but will eventually do all of them
 
         print('Loading learners...')
-        #learn_eachsub = []
         try:
             self.d.download_all_models()
-            filename = 'nlpmodel3-academic-humanities.pkl'
-            self.learn = torch.load(os.path.join(path_cwd, path_models, filename))
+            filenames = []
+            for i in range(0, len(subs)):
+                filename = 'nlpmodel3-' + subs[i] + '.pkl'
+                learn = torch.load(os.path.join(path_cwd, path_models, filename))
+                self.learn_eachsub.append(learn)
+                #racc: self.learn = ...
             #, map_location=torch.device('cpu')
             #for i in range(0, len(subs)):
             #    filename = 'dls-nlp-' + subs[i] + '-ALT.pkl'
@@ -256,21 +258,27 @@ class WorkWithModels:
 
                 #coati: currently just returning top 3 categories --- can make this mechanism more complex later
                 if i < num_to_return:
-                    subs_thisuser.append(subs[orig_index_of_pred])
+                    subs_thisuser.append(orig_index_of_pred)
+                    #racc: switching from names to indices, may cause issues later
+                    #subs_thisuser.append(subs[orig_index_of_pred])
         except Exception as e:
             print(e)
         
-        subs_eachuser[username] = subs_thisuser
+        self.subs_eachuser[username] = subs_thisuser
         #coati: save this somewhere
 
     def get_tweet_prediction(self, username, topic):
         TEXT = topic
         N_WORDS = 40
         N_SENTENCES = 4
-        preds = [self.learn.predict(TEXT, N_WORDS, temperature=0.75) 
-                for _ in range(N_SENTENCES)]
-        print('-------------------------------------------')
-        print("\n".join(preds))
-        print('-------------------------------------------')
+
+        subs_thisuser = self.subs_eachuser[username]
+        for i in range(0, len(subs_thisuser)):
+            cur_sub = subs[subs_thisuser[i]]
+            preds = [self.learn_eachsub[cur_sub].predict(TEXT, N_WORDS, temperature=0.75) 
+                    for _ in range(N_SENTENCES)]
+            print('-------------------------------------------')
+            print("\n".join(preds))
+            print('-------------------------------------------')
     
 #return 'got to end'
