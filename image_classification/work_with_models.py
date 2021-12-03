@@ -183,17 +183,17 @@ class WorkWithModels:
         print('Loading learners...')
         try:
             self.d.download_all_models()
-            filenames = []
             for i in range(0, len(subs)):
-                filename = 'nlpmodel3-' + subs[i] + '.pkl'
-                learn = torch.load(os.path.join(path_cwd, path_models, filename))
+                filename = 'nlpmodel3-' + subs[i] #don't include ".pth" in filename --- model.learn() doesn't require that
+                learn = language_model_learner(
+                    self.dls_eachsub[i], AWD_LSTM, drop_mult=0.3, 
+                    metrics=[accuracy, Perplexity()]).to_fp16()
+                learn.path = Path(str(path_cwd))/'static'
+                learn = learn.load(filename)
+
+                #learn = torch.load(os.path.join(path_cwd, path_models, filename))
                 self.learn_eachsub.append(learn)
-                #racc: self.learn = ...
-            #, map_location=torch.device('cpu')
-            #for i in range(0, len(subs)):
-            #    filename = 'dls-nlp-' + subs[i] + '-ALT.pkl'
-            #    dls_thissub = torch.load(os.path.join(path_cwd, path_dls, filename))
-            #    dls_eachsub.append(dls_thissub)
+                print('Successfully loaded model ' + str(i))
             print('Loaded')
         except Exception as e:
             print(e)
@@ -265,7 +265,7 @@ class WorkWithModels:
             print(e)
         
         self.subs_eachuser[username] = subs_thisuser
-        #coati: save this somewhere
+        #coati: SAVE THIS SOMEWHERE, like in a csv in the user's copy of the repo
 
     def get_tweet_prediction(self, username, topic):
         TEXT = topic

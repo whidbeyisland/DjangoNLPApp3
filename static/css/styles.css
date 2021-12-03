@@ -1,0 +1,25 @@
+body {
+    background-color: #187ecc;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+#logo {
+    font-size: 72px;
+    margin: 0px;
+}
+#subtitle {
+    font-size: 24px;
+    margin: 0px;
+}
+#header {
+    margin: auto;
+    width: 60%;
+}
+#entry-fields {
+    margin: auto;
+    width: 60%;
+}
+#twitter-box {
+    margin: auto;
+    width: 60%;
+}

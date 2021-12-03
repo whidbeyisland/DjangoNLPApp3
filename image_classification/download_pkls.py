@@ -42,9 +42,9 @@ path_dls = 'static\\dataloaders'
 path_models = 'static\\models'
 path_nums200 = 'static\\nums200'
 path_toks200 = 'static\\toks200'
-urls_eachsub = {
+urls_eachsub2 = {
     'academic-humanities': 'https://drive.google.com/uc?id=1-E3NJgfZbGY9b-EIho_hy_-62feeHTDn',
-    'academic-stem': 'https://drive.google.com/uc?1--FLwQk8WLMsSPsr9A0NuHeJlXEwwjOL',
+    'academic-stem': 'https://drive.google.com/uc?id=1--FLwQk8WLMsSPsr9A0NuHeJlXEwwjOL',
     'anime': 'https://drive.google.com/uc?id=1-2DtyFH5lY0i4Kr951BKflG-wirCzdxT',
     'astrology': 'https://drive.google.com/uc?id=102vZq6dnVG7gm5-yE8pvNflg2QqFmauz',
     'conservative': 'https://drive.google.com/uc?id=1-2On6tehSC6e0T0ottO8lWvfMCAe8gte',
@@ -54,6 +54,19 @@ urls_eachsub = {
     'liberal': 'https://drive.google.com/uc?id=1-Nbt8JWrgXBEkF3fceRkrPReGQefmM-7',
     'sports': 'https://drive.google.com/uc?id=1-Qb3USg32mQoWOi4nu1YnebxBfLJjSUN',
     'tech-nerd': 'https://drive.google.com/uc?id=1-7mnZi970TGltEe26oiTC4hRvV_DA-km'
+}
+urls_eachsub = {
+    'academic-humanities': 'https://drive.google.com/uc?id=1-AIBNRQzu6NGCmaIkmdXhj_jNlYtn_Sz',
+    'academic-stem': 'https://drive.google.com/uc?id=1tNwfOXHMYeHOaThRuChbXobC0Egob0hI',
+    'anime': 'https://drive.google.com/uc?id=1--ZMk8J04IbnpwXLChBKFQtvsqYppjTt',
+    'astrology': 'https://drive.google.com/uc?id=1025SE0dwAJ_7hviHpP7GzzGP8hdbc0zS',
+    'conservative': 'https://drive.google.com/uc?id=1RGLJuqTtrAPQvWCBKa2zeJdDh5P7nqRB',
+    'hippie-spiritual': 'https://drive.google.com/uc?id=1-6qmc-neLaiKagWXhJZlWn27Dnu6eY2Q',
+    'kpop': 'https://drive.google.com/uc?id=1tNhAoNu8DSVPwJl1-ju5DTtnTDYTiX1y',
+    'lgbtq': 'https://drive.google.com/uc?id=1-DWml_p85TQHPinu_W5_OXypiLot5KC4',
+    'liberal': 'https://drive.google.com/uc?id=1-EkacP440CZW7CEXvQyh0sWTGfCax3oN',
+    'sports': 'https://drive.google.com/uc?id=1-OMOSo7B-fru8tjN0foBpsiUc00N8Ukl',
+    'tech-nerd': 'https://drive.google.com/uc?id=1S5AExvpdwGOIOQ4bdq3XfCH1-Y1-a4li'
 }
 
 class DownloadPkls:
@@ -73,11 +86,19 @@ class DownloadPkls:
         except Exception as e:
             return e
 
-    def download_all_models(self):
+    def download_all_models2(self):
         for i in range(0, len(subs)):
             url = urls_eachsub[subs[i]]
             folder = 'models'
             filename = 'nlpmodel3-' + subs[i] + '.pkl'
+            if not os.path.exists(os.path.join(path_cwd, path_models, filename)):
+                self.download_things(url, folder, filename)
+    
+    def download_all_models(self):
+        for i in range(0, len(subs)):
+            url = urls_eachsub[subs[i]]
+            folder = 'models'
+            filename = 'nlpmodel3-' + subs[i] + '.pth'
             if not os.path.exists(os.path.join(path_cwd, path_models, filename)):
                 self.download_things(url, folder, filename)
 
