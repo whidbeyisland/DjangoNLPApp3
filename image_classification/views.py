@@ -49,13 +49,13 @@ def index(request):
                 #w.get_categorization_assets_ready()
                 w.get_generation_assets_ready()
                 #subs_to_generate = w.categorize_user(username)
-                #w.download_user_tweets(username)
-                #w.get_tweet_prediction(username, prompt)
-                #w.get_tweet_prediction(username, 'People from ancient Mesopotamia')
-                #w.get_tweet_prediction(username, 'Japan is a nation')
-                #w.get_tweet_prediction(username, 'Homophobia')
-                #w.get_tweet_prediction(username, 'It is highly disappointing that')
-                #predicted_label = 'success!'
+                w.subs_eachuser[username] = [0, 1, 2]
+                w.get_tweet_prediction(username, prompt)
+                w.get_tweet_prediction(username, 'People from ancient Mesopotamia')
+                w.get_tweet_prediction(username, 'Japan is a nation')
+                w.get_tweet_prediction(username, 'Homophobia')
+                w.get_tweet_prediction(username, 'It is highly disappointing that')
+                predicted_label = 'success!'
 
             except RuntimeError as re:
                 predicted_label = re

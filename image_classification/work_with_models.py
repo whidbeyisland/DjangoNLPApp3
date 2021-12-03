@@ -184,16 +184,19 @@ class WorkWithModels:
         try:
             self.d.download_all_models()
             for i in range(0, len(subs)):
-                filename = 'nlpmodel3-' + subs[i] #don't include ".pth" in filename --- model.learn() doesn't require that
-                learn = language_model_learner(
-                    self.dls_eachsub[i], AWD_LSTM, drop_mult=0.3, 
-                    metrics=[accuracy, Perplexity()]).to_fp16()
-                learn.path = Path(str(path_cwd))/'static'
-                learn = learn.load(filename)
+                try:
+                    filename = 'nlpmodel3-' + subs[i] #don't include ".pth" in filename --- model.learn() doesn't require that
+                    learn = language_model_learner(
+                        self.dls_eachsub[i], AWD_LSTM, drop_mult=0.3, 
+                        metrics=[accuracy, Perplexity()]).to_fp16()
+                    learn.path = Path(str(path_cwd))/'static'
+                    learn = learn.load(filename)
 
-                #learn = torch.load(os.path.join(path_cwd, path_models, filename))
-                self.learn_eachsub.append(learn)
-                print('Successfully loaded model ' + str(i))
+                    #learn = torch.load(os.path.join(path_cwd, path_models, filename))
+                    self.learn_eachsub.append(learn)
+                    print('Successfully loaded model ' + str(i))
+                except:
+                    print('Failed to load model ' + str(i))
             print('Loaded')
         except Exception as e:
             print(e)
@@ -274,7 +277,7 @@ class WorkWithModels:
 
         subs_thisuser = self.subs_eachuser[username]
         for i in range(0, len(subs_thisuser)):
-            cur_sub = subs[subs_thisuser[i]]
+            cur_sub = subs_thisuser[i]
             preds = [self.learn_eachsub[cur_sub].predict(TEXT, N_WORDS, temperature=0.75) 
                     for _ in range(N_SENTENCES)]
             print('-------------------------------------------')
