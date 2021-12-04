@@ -47,8 +47,50 @@ class TweetManipulations:
         pred = self.alter_capitalization(pred)
         pred = self.alter_punctuation(pred)
         return pred
-
+    
     def insert_rare_words(self, pred, rare_words):
+        rare_words.append('banana')
+        rare_words.append('fox')
+        random.shuffle(rare_words)
+        threshold = 0.5
+        replaced_so_far = 0
+        max_replace_count = 5
+
+        # for each word in the prediction, find the person's rare word that is most similar to it and also over
+        # the threshold, and change it to that rare word
+        words = pred.split()
+        words_to_replace = []
+        for i in range(0, len(rare_words)):
+            if replaced_so_far < max_replace_count:
+                best_word = None
+                best_word_simil = 0
+                
+                try:
+                    syn1 = wordnet.synsets(rare_words[i])[0]
+                    for word in words:
+                        try:
+                            syn2 = wordnet.synsets(word)[0]
+                            simil = syn1.wup_similarity(syn2)
+                            if simil is not None:
+                                ind = words.index(word)
+                                if simil > threshold and simil > best_word_simil:
+                                    best_word = word
+                                    best_word_simil = simil
+                                if best_word_simil > 0:
+                                    words_to_replace.append([ind, i])
+                                    replaced_so_far += 1
+                        except Exception as e:
+                            pass # print('2 ' + str(e))
+                except Exception as e:
+                    pass # print('1 ' + str(e))
+        if len(words_to_replace) > 0:
+            for pair in words_to_replace:
+                words[pair[1]] = rare_words[pair[1]]
+        pred = ' '.join(words)
+
+        return pred
+
+    def insert_rare_words2(self, pred, rare_words):
         threshold = 0.4
 
         rare_words.append('banana')
@@ -95,10 +137,10 @@ class TweetManipulations:
         pred = re.sub(' /', '/', pred)
         pred = re.sub('/ ', '/', pred)
         pred = re.sub(' :', ':', pred)
-        pred = re.sub('\\( ', '(', pred)
-        pred = re.sub(' \\)', ')', pred)
-        pred = re.sub(' \\.', '.', pred)
-        pred = re.sub(' \\,', ',', pred)
+        pred = re.sub('\( ', '(', pred)
+        pred = re.sub(' \)', ')', pred)
+        pred = re.sub(' \.', '.', pred)
+        pred = re.sub(' \,', ',', pred)
         pred = re.sub('=', '', pred)
         pred = re.sub('\n', ' ', pred)
         pred = re.sub('"', '', pred)
