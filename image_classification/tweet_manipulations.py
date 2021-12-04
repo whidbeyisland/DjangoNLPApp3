@@ -54,8 +54,8 @@ class TweetManipulations:
         rare_words.append('banana')
         rare_words.append('fox')
 
-        #for each word in the prediction, find the person's rare word that is most similar to it and also over
-        #the threshold, and change it to that rare word
+        # for each word in the prediction, find the person's rare word that is most similar to it and also over
+        # the threshold, and change it to that rare word
         words = pred.split()
         words_to_replace = []
         for i in range(0, len(words)):
@@ -76,9 +76,9 @@ class TweetManipulations:
                             if best_rare_word_simil > 0:
                                 words_to_replace.append([i, best_rare_word])
                     except Exception as e:
-                        pass #print('2 ' + str(e))
+                        pass # print('2 ' + str(e))
             except Exception as e:
-                pass #print('1 ' + str(e))
+                pass # print('1 ' + str(e))
         if len(words_to_replace) > 0:
             for pair in words_to_replace:
                 words[pair[0]] = pair[1]

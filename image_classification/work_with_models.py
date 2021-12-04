@@ -69,7 +69,7 @@ class WorkWithModels:
     nums200_eachsub = []
     dls_eachsub = []
     learn_eachsub = []
-    #learn = None
+    # learn = None
 
     df_c = None
     tkn_c = None
@@ -107,8 +107,8 @@ class WorkWithModels:
         coll_repr(self.num_user.vocab,20)
     
     def get_rare_words(self, username):
-        #coati: should specifically look through the *user's* texts, i.e. have user-specific assets loaded from
-        #.pkl's (or if you're only storing the user's vocabulary, a .txt)
+        # coati: should specifically look through the *user's* texts, i.e. have user-specific assets loaded from
+        # .pkl's (or if you're only storing the user's vocabulary, a .txt)
 
         with open(Path(str(path_df))/'common_words.txt', 'rb', 0) as f, \
             mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as s:
@@ -121,10 +121,10 @@ class WorkWithModels:
                         elif word[-3:] in ['ing']: lemma = word[:-3]
                         if not s.find(lemma[:-1].encode()) != -1:
                             self.rare_words_user.append(word)
-            #coati: maybe store these variables differently?
+            # coati: maybe store these variables differently?
             self.t.rare_words_user = self.rare_words_user
-        #for i in range(0, len(self.rare_words_user)):
-        #    print(self.rare_words_user[i])
+        # for i in range(0, len(self.rare_words_user)):
+        #     print(self.rare_words_user[i])
 
 
     
@@ -169,9 +169,9 @@ class WorkWithModels:
             print('Attempt 2')
             self.d.download_learn_c_pth()
             self.learn_c = text_classifier_learner(self.dls_c, AWD_LSTM, drop_mult = 0.5, metrics = accuracy).to_fp16()
-            #self.learn_c.path = Path(str(os.path.join(path_cwd, path_models)))
+            # self.learn_c.path = Path(str(os.path.join(path_cwd, path_models)))
             self.learn_c.path = Path(str(path_cwd))/'static'
-            #self.learn_c.path = Path(str(path_cwd)/'static')
+            # self.learn_c.path = Path(str(path_cwd)/'static')
             self.learn_c = self.learn_c.load('nlpmodel3_clas')
         except Exception as e:
             print(e)
@@ -199,8 +199,8 @@ class WorkWithModels:
             print(str(len(self.txts_eachsub)))
         except Exception as e:
             print(e)
-        #coati: TO DO................ store txts_eachsub.pkl on drive so you can download it, currently the program has no way
-        #of creating it
+        # coati: TO DO................ store txts_eachsub.pkl on drive so you can download it, currently the program has
+        # no way of creating it
 
         print('Loading toks200...')
         try:
@@ -233,14 +233,14 @@ class WorkWithModels:
             self.d.download_all_models()
             for i in range(0, len(subs)):
                 try:
-                    filename = 'nlpmodel3-' + subs[i] #don't include ".pth" in filename --- model.learn() doesn't require that
+                    filename = 'nlpmodel3-' + subs[i] # don't include ".pth" in filename --- model.learn() doesn't require it
                     learn = language_model_learner(
                         self.dls_eachsub[i], AWD_LSTM, drop_mult=0.3, 
                         metrics=[accuracy, Perplexity()]).to_fp16()
                     learn.path = Path(str(path_cwd))/'static'
                     learn = learn.load(filename)
 
-                    #learn = torch.load(os.path.join(path_cwd, path_models, filename))
+                    # learn = torch.load(os.path.join(path_cwd, path_models, filename))
                     self.learn_eachsub.append(learn)
                     print('Successfully loaded model ' + str(i))
                 except:
@@ -254,16 +254,16 @@ class WorkWithModels:
 
         tweets_list = []
 
-        for i,tweet in enumerate(sntwitter.TwitterSearchScraper('from:' + username).get_items()): #declare a username 
+        for i,tweet in enumerate(sntwitter.TwitterSearchScraper('from:' + username).get_items()): 
             if i > max_tweets:
                 break
             tweets_list.append([tweet.content])
-            #racc: tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username])
+            # racc: tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username])
  
         tweets_df = pd.DataFrame(tweets_list, columns=['Content'])
         tweets_df.to_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'))
 
-        #coati: if this version of snscrape stops working, another way to do it:
+        # coati: if this version of snscrape stops working, another way to do it:
 
         # scraper = snscrape.modules.twitter.TwitterUserScraper('textfiles')
         # for tweet in scraper.get_items():
@@ -271,7 +271,7 @@ class WorkWithModels:
         #     print(tweet.date)
         #     print(tweet.content)
 
-        #os.system('snscrape --max-results ' + str(max_tweets) + ' twitter-user ' + username + ' >tweets-by-user-' + username + '.txt')
+        # os.system('snscrape --max-results ' + str(max_tweets) + ' twitter-user ' + username + ' >tweets-by-user-' + username + '.txt')
 
     def categorize_user(self, username):
         subs_thisuser = []
@@ -279,9 +279,9 @@ class WorkWithModels:
         try:
             self.download_user_tweets(username)
 
-            #coati: uncomment this if you get rid of "get_user_assets()" method
-            #self.df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), index_col=0)
-            #self.df_user.columns = ['Content']
+            # coati: uncomment this if you get rid of "get_user_assets()" method
+            # self.df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), index_col=0)
+            # self.df_user.columns = ['Content']
 
             preds_each_tweet = []
             for i in range(0, tweets_to_analyze):
@@ -294,13 +294,13 @@ class WorkWithModels:
             df_preds = pd.DataFrame(all_preds_each_categ.numpy())
             df_preds.columns = subs
 
-            #predictions of subculture for all of the user's tweets
+            # predictions of subculture for all of the user's tweets
             preds_overall_each_categ = []
             for i in range(0, len(subs)):
                 pred_overall_this_categ = df_preds[subs[i]].mean()
                 preds_overall_each_categ.append(pred_overall_this_categ)
 
-            #sorting these overall predictions from most to least likely
+            # sorting these overall predictions from most to least likely
             preds_overall_each_categ_sorted = deepcopy(preds_overall_each_categ)
             preds_overall_each_categ_sorted.sort(reverse=True)
 
@@ -309,16 +309,16 @@ class WorkWithModels:
                 orig_index_of_pred = preds_overall_each_categ.index(cur_pred)
                 print('Likelihood of being in group ' + subs[orig_index_of_pred] + ': ' + str(cur_pred))
 
-                #coati: currently just returning top 3 categories --- can make this mechanism more complex later
+                # coati: currently just returning top 3 categories --- can make this mechanism more complex later
                 if i < num_to_return:
                     subs_thisuser.append(orig_index_of_pred)
-                    #racc: switching from names to indices, may cause issues later
-                    #subs_thisuser.append(subs[orig_index_of_pred])
+                    # racc: switching from names to indices, may cause issues later
+                    # subs_thisuser.append(subs[orig_index_of_pred])
         except Exception as e:
             print(e)
         
         self.subs_eachuser[username] = subs_thisuser
-        #coati: SAVE THIS SOMEWHERE, like in a csv in the user's copy of the repo
+        # coati: SAVE THIS SOMEWHERE, like in a csv in the user's copy of the repo
 
     def get_tweet_prediction(self, username, topic):
         TEXT = topic
@@ -335,4 +335,4 @@ class WorkWithModels:
             print("\n".join(preds_manipulated))
             print('-------------------------------------------')
     
-#return 'got to end'
+# return 'got to end'

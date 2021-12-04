@@ -53,9 +53,9 @@ def index(request):
                 w.get_user_assets_ready(username)
                 w.get_rare_words(username)
 
-                #w.get_categorization_assets_ready()
+                # w.get_categorization_assets_ready()
                 w.get_generation_assets_ready()
-                #subs_to_generate = w.categorize_user(username)
+                # subs_to_generate = w.categorize_user(username)
                 w.subs_eachuser[username] = [0, 1, 2]
                 w.get_tweet_prediction(username, prompt)
                 # w.get_tweet_prediction(username, 'People from ancient Mesopotamia')
