@@ -29,6 +29,7 @@ from string import punctuation
 from .forms import TextEntryForm
 from .download_pkls import *
 from .work_with_models import *
+from .tweet_manipulations import *
 
 
 
@@ -45,16 +46,21 @@ def index(request):
             try:
                 d = DownloadPkls()
                 w = WorkWithModels(d)
+
+
+
                 #w.download_user_tweets(username)
                 #w.get_categorization_assets_ready()
                 w.get_generation_assets_ready()
                 #subs_to_generate = w.categorize_user(username)
                 w.subs_eachuser[username] = [0, 1, 2]
                 w.get_tweet_prediction(username, prompt)
-                w.get_tweet_prediction(username, 'People from ancient Mesopotamia')
-                w.get_tweet_prediction(username, 'Japan is a nation')
-                w.get_tweet_prediction(username, 'Homophobia')
-                w.get_tweet_prediction(username, 'It is highly disappointing that')
+                # w.get_tweet_prediction(username, 'People from ancient Mesopotamia')
+                # w.get_tweet_prediction(username, 'Japan is a nation')
+                # w.get_tweet_prediction(username, 'Homophobia')
+                # w.get_tweet_prediction(username, 'It is highly disappointing that')
+                w.get_tweet_prediction(username, 'I really don\'t like')
+                w.get_tweet_prediction(username, 'My absolute favorite')
                 predicted_label = 'success!'
 
             except RuntimeError as re:

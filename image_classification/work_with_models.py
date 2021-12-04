@@ -29,6 +29,7 @@ from string import punctuation
 
 from .forms import TextEntryForm
 from .download_pkls import *
+from .tweet_manipulations import *
 
 import pathlib
 posixpath_temp = pathlib.PosixPath
@@ -58,6 +59,7 @@ def subword(sz):
 
 class WorkWithModels: 
     d = None
+    t = None
 
     df_eachsub = []
     tkn_eachsub = []
@@ -79,6 +81,7 @@ class WorkWithModels:
 
     def __init__(self, d):
         self.d = d
+        self.t = TweetManipulations()
     
     def get_categorization_assets_ready(self):
         print('Getting assets for categorization, hang tight................')
@@ -231,7 +234,7 @@ class WorkWithModels:
             self.download_user_tweets(username)
             df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), index_col=0)
             df_user.columns = ['Content']
-            first100tweets = df_user.loc[0:tweets_to_analyze, 'Content']
+            #racc: first100tweets = df_user.loc[0:tweets_to_analyze, 'Content']
 
             preds_each_tweet = []
             for i in range(0, tweets_to_analyze):
@@ -280,8 +283,9 @@ class WorkWithModels:
             cur_sub = subs_thisuser[i]
             preds = [self.learn_eachsub[cur_sub].predict(TEXT, N_WORDS, temperature=0.75) 
                     for _ in range(N_SENTENCES)]
+            preds_manipulated = [self.t.apply_manipulations(preds[i]) for i in range(0, N_SENTENCES)]
             print('-------------------------------------------')
-            print("\n".join(preds))
+            print("\n".join(preds_manipulated))
             print('-------------------------------------------')
     
 #return 'got to end'
