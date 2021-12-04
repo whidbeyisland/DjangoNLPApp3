@@ -38,25 +38,58 @@ pathlib.PosixPath = pathlib.WindowsPath
 
 
 class TweetManipulations:
-    rare_words = []
-
     def __init__(self):
         pass
 
     def apply_manipulations(self, pred, rare_words):
-        pred = self.insert_rare_words(pred)
+        pred = self.insert_rare_words(pred, rare_words)
         pred = self.check_grammar(pred)
         pred = self.alter_capitalization(pred)
         pred = self.alter_punctuation(pred)
         return pred
 
-    def insert_rare_words(self, pred):
+    def insert_rare_words(self, pred, rare_words):
+        threshold = 0.4
+
+        rare_words.append('banana')
+        rare_words.append('fox')
+
+        #for each word in the prediction, find the person's rare word that is most similar to it and also over
+        #the threshold, and change it to that rare word
+        words = pred.split()
+        words_to_replace = []
+        for i in range(0, len(words)):
+            best_rare_word = None
+            best_rare_word_simil = 0
+            
+            try:
+                syn1 = wordnet.synsets(words[i])[0]
+                for rare_word in rare_words:
+                    try:
+                        syn2 = wordnet.synsets(rare_word)[0]
+                        simil = syn1.wup_similarity(syn2)
+                        if simil is not None:
+                            print(rare_word)
+                            if simil > threshold and simil > best_rare_word_simil:
+                                best_rare_word = rare_word
+                                best_rare_word_simil = simil
+                            if best_rare_word_simil > 0:
+                                words_to_replace.append([i, best_rare_word])
+                    except Exception as e:
+                        pass #print('2 ' + str(e))
+            except Exception as e:
+                pass #print('1 ' + str(e))
+        if len(words_to_replace) > 0:
+            for pair in words_to_replace:
+                words[pair[0]] = pair[1]
+        pred = ' '.join(words)
+
         return pred
     
     def check_grammar(self, pred):
         pred = pred.strip()
 
-        pred = re.sub('’', '\'')
+        pred = re.sub('’', '\'', pred)
 
         pred = re.sub(' \'', '\'', pred)
         pred = re.sub(' /', '/', pred)
@@ -73,6 +106,8 @@ class TweetManipulations:
         pred = re.sub('^ +', '', pred)
         pred = re.sub(' \?', '?', pred)
         pred = re.sub(' !', '!', pred)
+        pred = re.sub(' -', '-', pred)
+        pred = re.sub('- ', '-', pred)
         
         pred = re.sub('i\'re', 'i\'m', pred)
         pred = re.sub('i\'s', 'i\'m', pred)

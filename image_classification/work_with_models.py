@@ -86,9 +86,9 @@ class WorkWithModels:
     num_user = None
     rare_words_user = []
 
-    def __init__(self, d):
+    def __init__(self, d, t):
         self.d = d
-        self.t = TweetManipulations()
+        self.t = t
     
 
 
@@ -121,9 +121,11 @@ class WorkWithModels:
                         elif word[-3:] in ['ing']: lemma = word[:-3]
                         if not s.find(lemma[:-1].encode()) != -1:
                             self.rare_words_user.append(word)
-        for i in range(0, len(self.rare_words_user)):
-            print(self.rare_words_user[i])
-    
+            #coati: maybe store these variables differently?
+            self.t.rare_words_user = self.rare_words_user
+        #for i in range(0, len(self.rare_words_user)):
+        #    print(self.rare_words_user[i])
+
 
     
     def get_categorization_assets_ready(self):
@@ -328,7 +330,7 @@ class WorkWithModels:
             cur_sub = subs_thisuser[i]
             preds = [self.learn_eachsub[cur_sub].predict(TEXT, N_WORDS, temperature=0.75) 
                     for _ in range(N_SENTENCES)]
-            preds_manipulated = [self.t.apply_manipulations(preds[i]) for i in range(0, N_SENTENCES)]
+            preds_manipulated = [self.t.apply_manipulations(preds[i], self.rare_words_user) for i in range(0, N_SENTENCES)]
             print('-------------------------------------------')
             print("\n".join(preds_manipulated))
             print('-------------------------------------------')

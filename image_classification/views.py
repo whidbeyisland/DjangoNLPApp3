@@ -45,7 +45,8 @@ def index(request):
 
             try:
                 d = DownloadPkls()
-                w = WorkWithModels(d)
+                t = TweetManipulations()
+                w = WorkWithModels(d, t)
 
                 
                 w.download_user_tweets(username)
