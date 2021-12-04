@@ -38,13 +38,19 @@ pathlib.PosixPath = pathlib.WindowsPath
 
 
 class TweetManipulations:
+    rare_words = []
+
     def __init__(self):
         pass
 
-    def apply_manipulations(self, pred):
+    def apply_manipulations(self, pred, rare_words):
+        pred = self.insert_rare_words(pred)
         pred = self.check_grammar(pred)
         pred = self.alter_capitalization(pred)
         pred = self.alter_punctuation(pred)
+        return pred
+
+    def insert_rare_words(self, pred):
         return pred
     
     def check_grammar(self, pred):

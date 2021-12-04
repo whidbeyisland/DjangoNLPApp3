@@ -47,9 +47,11 @@ def index(request):
                 d = DownloadPkls()
                 w = WorkWithModels(d)
 
+                
+                w.download_user_tweets(username)
+                w.get_user_assets_ready(username)
+                w.get_rare_words(username)
 
-
-                #w.download_user_tweets(username)
                 #w.get_categorization_assets_ready()
                 w.get_generation_assets_ready()
                 #subs_to_generate = w.categorize_user(username)

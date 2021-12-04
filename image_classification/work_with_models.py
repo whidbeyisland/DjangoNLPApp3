@@ -26,10 +26,11 @@ nltk.download('wordnet')
 from nltk.corpus import wordnet
 from nltk import FreqDist
 from string import punctuation
+import mmap
 
 from .forms import TextEntryForm
 from .download_pkls import *
-from .tweet_manipulations import *
+from .tweet_manipulations import TweetManipulations
 
 import pathlib
 posixpath_temp = pathlib.PosixPath
@@ -79,9 +80,51 @@ class WorkWithModels:
 
     subs_eachuser = dict()
 
+    df_user = None
+    txts_user = []
+    toks200_user = None
+    num_user = None
+    rare_words_user = []
+
     def __init__(self, d):
         self.d = d
         self.t = TweetManipulations()
+    
+
+
+    # methods to get user's distinctive vocabulary
+    def get_user_assets_ready(self, username):
+        spacy = WordTokenizer()
+        tkn = Tokenizer(spacy)
+
+        self.df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), index_col=0)
+        self.df_user.columns = ['Content']
+        self.txts_user = L(self.df_user.iloc[i, 0] for i in range(0, self.df_user.shape[0]))
+
+        self.toks200_user = self.txts_user.map(tkn)
+        self.num_user = Numericalize()
+        self.num_user.setup(self.toks200_user)
+        coll_repr(self.num_user.vocab,20)
+    
+    def get_rare_words(self, username):
+        #coati: should specifically look through the *user's* texts, i.e. have user-specific assets loaded from
+        #.pkl's (or if you're only storing the user's vocabulary, a .txt)
+
+        with open(Path(str(path_df))/'common_words.txt', 'rb', 0) as f, \
+            mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as s:
+            for word in self.num_user.vocab:
+                if len(word) >= 4:
+                    if word[0] != '@' and word[0:2] != 'xx' and word not in ['t.co', 'https']:
+                        lemma = word
+                        if word[-1:] in ['d', 's']: lemma = word[:-1]
+                        elif word[-2:] in ['er', 'in', 'st', 'th', 'ty']: lemma = word[:-2]
+                        elif word[-3:] in ['ing']: lemma = word[:-3]
+                        if not s.find(lemma[:-1].encode()) != -1:
+                            self.rare_words_user.append(word)
+        for i in range(0, len(self.rare_words_user)):
+            print(self.rare_words_user[i])
+    
+
     
     def get_categorization_assets_ready(self):
         print('Getting assets for categorization, hang tight................')
@@ -216,8 +259,9 @@ class WorkWithModels:
             #racc: tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username])
  
         tweets_df = pd.DataFrame(tweets_list, columns=['Content'])
-        #print(tweets_df.iloc[0:10,:])
         tweets_df.to_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'))
+
+        #coati: if this version of snscrape stops working, another way to do it:
 
         # scraper = snscrape.modules.twitter.TwitterUserScraper('textfiles')
         # for tweet in scraper.get_items():
@@ -232,14 +276,15 @@ class WorkWithModels:
 
         try:
             self.download_user_tweets(username)
-            df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), index_col=0)
-            df_user.columns = ['Content']
-            #racc: first100tweets = df_user.loc[0:tweets_to_analyze, 'Content']
+
+            #coati: uncomment this if you get rid of "get_user_assets()" method
+            #self.df_user = pd.read_csv(os.path.join(path_tweets, 'tweets-' + username + '.csv'), index_col=0)
+            #self.df_user.columns = ['Content']
 
             preds_each_tweet = []
             for i in range(0, tweets_to_analyze):
                 print('Analyzing tweet #', i)
-                preds_this_tweet = self.learn_c.predict(df_user.loc[i, 'Content'])[2]
+                preds_this_tweet = self.learn_c.predict(self.df_user.loc[i, 'Content'])[2]
                 print(preds_this_tweet)
                 preds_each_tweet.append(preds_this_tweet)
             all_preds_each_categ = torch.stack(preds_each_tweet)
