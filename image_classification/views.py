@@ -35,12 +35,13 @@ from .tweet_manipulations import *
 
 
 def index(request):
+    request_complete = False
     predicted_label = None
     today = datetime.now()
     todaydate = today.strftime("%I:%M %p · %B %d, %Y")
     user_alias = 'Username Alias'
     username = 'username'
-    predicted_tweet = 'Tweet goes here'
+    predicted_tweets = ['Tweet goes here', 'Tweet goes here']
 
     if request.method == 'POST':
         form = TextEntryForm(request.POST, request.FILES)
@@ -53,7 +54,6 @@ def index(request):
                 d = DownloadPkls()
                 t = TweetManipulations()
                 w = WorkWithModels(d, t)
-
                 
                 w.download_user_tweets(username)
                 w.get_user_assets_ready(username)
@@ -63,16 +63,16 @@ def index(request):
                 w.get_generation_assets_ready()
                 # subs_to_generate = w.categorize_user(username)
                 w.subs_eachuser[username] = [0, 1, 2]
-                w.get_tweet_prediction(username, prompt)
-                # w.get_tweet_prediction(username, 'People from ancient Mesopotamia')
-                # w.get_tweet_prediction(username, 'Japan is a nation')
-                # w.get_tweet_prediction(username, 'Homophobia')
-                # w.get_tweet_prediction(username, 'It is highly disappointing that')
-                w.get_tweet_prediction(username, 'I really don\'t like')
-                w.get_tweet_prediction(username, 'My absolute favorite')
-                predicted_tweet = 'Tweet goes here'
+                predicted_tweets = w.get_tweet_predictions(username, prompt)
+                # w.get_tweet_predictions(username, 'People from ancient Mesopotamia')
+                # w.get_tweet_predictions(username, 'Japan is a nation')
+                # w.get_tweet_predictions(username, 'Homophobia')
+                # w.get_tweet_predictions(username, 'It is highly disappointing that')
+                # w.get_tweet_predictions(username, 'I really don\'t like')
+                # w.get_tweet_predictions(username, 'My absolute favorite')
                 predicted_label = 'success!'
                 user_alias = username + 'Alias' # coati: retrieve person's alias
+                request_complete = True
 
             except RuntimeError as re:
                 predicted_label = re
@@ -83,10 +83,11 @@ def index(request):
 
     context = {
         'form': form,
-        'predicted_tweet': predicted_tweet,
+        'predicted_tweets': predicted_tweets,
         'predicted_label': predicted_label,
         'username': username,
         'user_alias': user_alias,
-        'todaydate': todaydate
+        'todaydate': todaydate,
+        'request_complete': request_complete
     }
     return render(request, 'image_classification/index.html', context)

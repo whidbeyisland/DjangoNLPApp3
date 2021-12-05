@@ -7,9 +7,11 @@ body {
     overflow: auto;
     margin: auto;
     width: 70%;
+    min-height: 110%;
     background-color: #ffffff;
     color: #282828;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-bottom: 80px;
 }
 #header {
     padding: 40px;
@@ -35,6 +37,8 @@ body {
 
 /* Styles for embedded tweets */
 .twitter-outer-box {
+    margin-top: 10px;
+    margin-bottom: 10px;
     background-color: white;
     border: solid #cccccc;
     border-width: 1px;

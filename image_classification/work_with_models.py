@@ -320,19 +320,31 @@ class WorkWithModels:
         self.subs_eachuser[username] = subs_thisuser
         # coati: SAVE THIS SOMEWHERE, like in a csv in the user's copy of the repo
 
-    def get_tweet_prediction(self, username, topic):
-        TEXT = topic
-        N_WORDS = 40
-        N_SENTENCES = 4
+    def get_tweet_predictions(self, username, topic):
+        num_words = 20
+        # coati: for now just 1 sentence, but in the future you can generate multiple and pick the best one by
+        # some metric
+        num_sentences = 1
 
         subs_thisuser = self.subs_eachuser[username]
+        preds_manipulated_all_subs = []
         for i in range(0, len(subs_thisuser)):
             cur_sub = subs_thisuser[i]
-            preds = [self.learn_eachsub[cur_sub].predict(TEXT, N_WORDS, temperature=0.75) 
-                    for _ in range(N_SENTENCES)]
-            preds_manipulated = [self.t.apply_manipulations(preds[i], self.rare_words_user) for i in range(0, N_SENTENCES)]
+            intro = self.intro_from_prompt(topic)
+            preds = self.learn_eachsub[cur_sub].predict(intro, num_words, temperature=0.75)
+                    # racc: [self.learn_eachsub ... for _ in range(n_sentences)]
+            # preds = [self.learn_eachsub[cur_sub].predict(intro, num_words, temperature=0.75) for _ in range(num_sentences)]
+            preds_manipulated = self.t.apply_manipulations(preds, self.rare_words_user)
+            # preds_manipulated = [self.t.apply_manipulations(preds[i], self.rare_words_user) for i in range(0, num_sentences)]
+            preds_manipulated_all_subs.append(preds_manipulated)
             print('-------------------------------------------')
-            print("\n".join(preds_manipulated))
+            print('\n'.join(preds_manipulated))
             print('-------------------------------------------')
-    
-# return 'got to end'
+        return preds_manipulated_all_subs
+
+    # coati: create intros like "X is just...", "I love X because..."
+    def intro_from_prompt(self, topic):
+        intro = topic
+        intro += ' really makes me want to'
+
+        return intro

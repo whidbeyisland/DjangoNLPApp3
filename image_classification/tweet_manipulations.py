@@ -45,6 +45,7 @@ class TweetManipulations:
         # pred = self.insert_rare_words(pred, rare_words)
         pred = self.check_grammar(pred)
         pred = self.alter_capitalization(pred)
+        pred = self.truncate_tail(pred)
         pred = self.alter_punctuation(pred)
         return pred
     
@@ -83,6 +84,10 @@ class TweetManipulations:
         return pred.lower()
     
     def alter_punctuation(self, pred):
+        return pred
+    
+    def truncate_tail(self, pred):
+        pred = re.sub('\.[^\.]*$', '', pred)
         return pred
     
     # currently not using this, "synsets" not a high-quality synonym database, but may try to make this
