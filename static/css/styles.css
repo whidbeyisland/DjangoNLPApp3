@@ -1,8 +1,18 @@
 /* General page styles */
 body {
     background-color: #187ecc;
-    color: #ffffff;
+    margin: 0px;
+}
+#body-content {
+    overflow: auto;
+    margin: auto;
+    width: 70%;
+    background-color: #ffffff;
+    color: #282828;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+#header {
+    padding: 40px;
 }
 #logo {
     font-size: 72px;
@@ -11,10 +21,6 @@ body {
 #subtitle {
     font-size: 24px;
     margin: 0px;
-}
-#header {
-    margin: auto;
-    width: 60%;
 }
 #entry-fields {
     margin: auto;
@@ -30,8 +36,10 @@ body {
 /* Styles for embedded tweets */
 .twitter-outer-box {
     background-color: white;
+    border: solid #cccccc;
+    border-width: 1px;
     border-radius: 15px;
-    padding: 15px;
+    padding: 10px 15px 15px 15px;
     line-height: 1.2;
 }
 .user-box {
@@ -80,7 +88,7 @@ hr {
     display: block;
     height: 1px;
     border: 0;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #cccccc;
     padding: 0;
 }
 .date-time {
