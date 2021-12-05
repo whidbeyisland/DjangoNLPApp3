@@ -25,6 +25,7 @@ nltk.download('wordnet')
 from nltk.corpus import wordnet
 from nltk import FreqDist
 from string import punctuation
+import datetime
 
 from .forms import TextEntryForm
 from .download_pkls import *
@@ -35,6 +36,11 @@ from .tweet_manipulations import *
 
 def index(request):
     predicted_label = None
+    today = datetime.now()
+    todaydate = today.strftime("%I:%M %p · %B %d, %Y")
+    user_alias = 'Username Alias'
+    username = 'username'
+    predicted_tweet = 'Tweet goes here'
 
     if request.method == 'POST':
         form = TextEntryForm(request.POST, request.FILES)
@@ -64,7 +70,9 @@ def index(request):
                 # w.get_tweet_prediction(username, 'It is highly disappointing that')
                 w.get_tweet_prediction(username, 'I really don\'t like')
                 w.get_tweet_prediction(username, 'My absolute favorite')
+                predicted_tweet = 'Tweet goes here'
                 predicted_label = 'success!'
+                user_alias = username + 'Alias' # coati: retrieve person's alias
 
             except RuntimeError as re:
                 predicted_label = re
@@ -75,6 +83,10 @@ def index(request):
 
     context = {
         'form': form,
+        'predicted_tweet': predicted_tweet,
         'predicted_label': predicted_label,
+        'username': username,
+        'user_alias': user_alias,
+        'todaydate': todaydate
     }
     return render(request, 'image_classification/index.html', context)

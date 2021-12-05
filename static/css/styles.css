@@ -1,3 +1,4 @@
+/* General page styles */
 body {
     background-color: #187ecc;
     color: #ffffff;
@@ -21,5 +22,93 @@ body {
 }
 #twitter-box {
     margin: auto;
+    min-width: 350px;
     width: 60%;
+    max-width: 550px;
+}
+
+/* Styles for embedded tweets */
+.twitter-outer-box {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    line-height: 1.2;
+}
+.user-box {
+    border: none;
+    padding: 5px;
+    line-height: 1.3;
+    margin: 0px;
+    overflow: hidden;
+}
+.user-box-left {
+    width: 55px;
+    float: left;
+}
+.user-box-right {
+    padding-top: 7px;
+    overflow: hidden;
+}
+.avatar {
+    margin: auto;
+    width: 50px;
+}
+.user-alias-p {
+    border: none;
+    color: #444444;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0px;
+    margin: 0px;
+}
+.username-p {
+    border: none;
+    color: #707070;
+    font-size: 14px;
+    padding: 0px;
+    margin: 0px;
+}
+.tweet-body {
+    border: none;
+    color: #444444;
+    font-size: 20px;
+    line-height: 1.2;
+    padding: 5px;
+    margin: 0px;
+}
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    padding: 0;
+}
+.date-time {
+    border: none;
+    color: #707070;
+    font-size: 14px;
+    padding: 5px;
+    margin: 0px;
+}
+.reactions {
+    border: none;
+    color: #707070;
+    font-size: 14px;
+    padding: 5px;
+    margin: 0px;
+}
+#tweet-outer-box-2 {
+    display: flex;
+    max-width: 550px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#tweet-inner-box-2 {
+    position: static;
+    visibility: visible;
+    width: 348px;
+    height: 250px;
+    display: block;
+    flex-grow: 1;
 }

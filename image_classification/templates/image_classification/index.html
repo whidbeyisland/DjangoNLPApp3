@@ -29,12 +29,37 @@
                 <button type="submit" id="btnUpload" class="btn btn-primary">Generate Tweets</button>
             </form>
         </div>
+
+        <div id="twitter-box">
+            <div class="twitter-outer-box">
+                <div class="user-box">
+                    <div class="user-box-left">
+                        <img class="avatar" src="{% static 'img/avatar.png' %}">
+                    </div>
+                    <div class="user-box-right">
+                        <p class="user-alias-p">{{ user_alias }}</p>
+                        <p class="username-p">@{{ username }}</p>
+                    </div>
+                </div>
+                <p class="tweet-body">{{ predicted_tweet }}</p>
+                <p class="date-time">{{ todaydate }}</p>
+                <hr>
+                <p class="reactions">99999 99999</p>
+            </div>
+        </div>
         
         <div id="twitter-box">
-            <div id="twitter-box">
-                <blockquote class="twitter-tweet" tw-align-center data-lang="en"><p lang="en" dir="ltr">Let us know! 👂<br>What type of content would you like to see from us this year?</p>&mdash; HubSpot (@HubSpot) <a href="https://twitter.com/HubSpot/status/1085634067679322114?ref_src=twsrc%5Etfw">January 16, 2019</a></blockquote>
-                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-            </div>
+            <blockquote class="twitter-tweet" tw-align-center data-lang="en">
+                <div class="fake-tweet">
+                    Hello
+                </div>
+                <p lang="en" dir="ltr">
+                    Let us know!asifoj 👂<br>What type of content would you like to see from us this year? {{ predicted_tweet }}
+                </p>
+                &mdash; {{ username_str }}
+                <a href="https://twitter.com/HubSpot/status/1085634067679322114?ref_src=twsrc%5Etfw">{{ todaydate }}</a><!--  -->
+            </blockquote>
+            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
         </div>
     </body>
 </html>
