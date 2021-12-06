@@ -109,6 +109,11 @@ hr {
     padding: 5px;
     margin: 0px;
 }
+.icon {
+    margin: auto;
+    padding-top: 4px;
+    width: 16px;
+}
 #tweet-outer-box-2 {
     display: flex;
     max-width: 550px;

@@ -26,12 +26,12 @@ from nltk.corpus import wordnet
 from nltk import FreqDist
 from string import punctuation
 import datetime
-import asyncio
 
 from .forms import TextEntryForm
 from .download_pkls import *
 from .work_with_models import *
 from .tweet_manipulations import *
+from .likes_replies_generator import LikesRepliesGenerator
 
 def index(request):
     request_complete = False
@@ -41,6 +41,9 @@ def index(request):
     user_alias = 'Username Alias'
     username = 'username'
     predicted_tweets = ['Tweet goes here', 'Tweet goes here']
+    num_likes_replies = LikesRepliesGenerator().generate(2)
+    num_likes_str_0, num_replies_str_0 = num_likes_replies[0][0], num_likes_replies[0][1]
+    num_likes_str_1, num_replies_str_1 = num_likes_replies[1][0], num_likes_replies[1][1]
 
     if request.method == 'POST':
         form = TextEntryForm(request.POST, request.FILES)
@@ -80,6 +83,10 @@ def index(request):
         'username': username,
         'user_alias': user_alias,
         'todaydate': todaydate,
+        'num_likes_str_0': num_likes_str_0,
+        'num_replies_str_0': num_replies_str_0,
+        'num_likes_str_1': num_likes_str_1,
+        'num_replies_str_1': num_replies_str_1,
         'request_complete': request_complete
     }
     return render(request, 'image_classification/index.html', context)

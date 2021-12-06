@@ -49,7 +49,11 @@
                     <p class="tweet-body">{{ predicted_tweets.0 }}</p>
                     <p class="date-time">{{ todaydate }}</p>
                     <hr>
-                    <p class="reactions">99999 99999</p>
+                    <p class="reactions">
+                        <img class="icon" src="{% static 'img/heart.png' %}"> {{ num_likes_str_0 }}
+                        <img class="icon" src="{% static 'img/speech-bubble.png' %}"> {{ num_replies_str_0 }}
+                        <!--<img class="icon" src="{% static 'img/upload.png' %}"> Share this Tweet-->
+                    </p>
                 </div>
                 <div class="twitter-outer-box">
                     <div class="user-box">
@@ -64,10 +68,13 @@
                     <p class="tweet-body">{{ predicted_tweets.1 }}</p>
                     <p class="date-time">{{ todaydate }}</p>
                     <hr>
-                    <p class="reactions">99999 99999</p>
+                    <p class="reactions">
+                        <img class="icon" src="{% static 'img/heart.png' %}"> {{ num_likes_str_1 }}
+                        <img class="icon" src="{% static 'img/speech-bubble.png' %}"> {{ num_replies_str_1 }}
+                        <!--<img class="icon" src="{% static 'img/upload.png' %}"> Share this Tweet-->
+                    </p>
                 </div>
             </div>
-            <!--
             <div id="twitter-box">
                 <blockquote class="twitter-tweet" tw-align-center data-lang="en">
                     <div class="fake-tweet">
@@ -81,7 +88,6 @@
                 </blockquote>
                 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
-            -->
         </div>
     </body>
 </html>
