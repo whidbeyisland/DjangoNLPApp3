@@ -26,13 +26,12 @@ from nltk.corpus import wordnet
 from nltk import FreqDist
 from string import punctuation
 import datetime
+import asyncio
 
 from .forms import TextEntryForm
 from .download_pkls import *
 from .work_with_models import *
 from .tweet_manipulations import *
-
-
 
 def index(request):
     request_complete = False
@@ -48,30 +47,23 @@ def index(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             prompt = form.cleaned_data['prompt']
-            print('TEEEEEEEEEEEEEEEEEST...1 ' + prompt)
 
             try:
                 d = DownloadPkls()
                 t = TweetManipulations()
                 w = WorkWithModels(d, t)
-                
+
                 w.download_user_tweets(username)
                 w.get_user_assets_ready(username)
                 w.get_rare_words(username)
+                w.get_generation_assets_ready()
 
                 # w.get_categorization_assets_ready()
-                w.get_generation_assets_ready()
                 # subs_to_generate = w.categorize_user(username)
                 w.subs_eachuser[username] = [0, 1, 2]
                 predicted_tweets = w.get_tweet_predictions(username, prompt)
-                # w.get_tweet_predictions(username, 'People from ancient Mesopotamia')
-                # w.get_tweet_predictions(username, 'Japan is a nation')
-                # w.get_tweet_predictions(username, 'Homophobia')
-                # w.get_tweet_predictions(username, 'It is highly disappointing that')
-                # w.get_tweet_predictions(username, 'I really don\'t like')
-                # w.get_tweet_predictions(username, 'My absolute favorite')
                 predicted_label = 'success!'
-                user_alias = username + 'Alias' # coati: retrieve person's alias
+                user_alias = username # coati: retrieve person's alias
                 request_complete = True
 
             except RuntimeError as re:
