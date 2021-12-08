@@ -211,19 +211,29 @@ class TweetManipulations:
     
     def find_syns(self, queried_word):
         all_syns = []
+        likely_proper_name = False
         try:
             syn1 = wordnet.synsets(queried_word)
             for i in range(0, len(syn1)):
                 try:
                     lemmata = syn1[i].lemma_names()
                     for j in range(0, len(lemmata)):
+                        # if the word's synonyms include any proper nouns, the word itself is probably a
+                        # proper noun, and we shouldn't find synonyms for it
+                        if re.match('^[A-Z]', lemmata[j]):
+                            likely_proper_name = True
                         all_syns.append(lemmata[j])
                 except Exception as e:
                     pass
         except Exception as e:
             print(e)
-        print('Synonyms for ' + queried_word + ': ' + ' '.join(all_syns))
-            
+        all_syns = filter(lambda word: word != queried_word, all_syns)
+        all_syns = list(set(all_syns))
+
+        if likely_proper_name == True:
+            all_syns = []
+
+        return all_syns    
 
     
     # currently not using this, "synsets" not a high-quality synonym database, but may try to make this

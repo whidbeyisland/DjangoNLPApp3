@@ -34,11 +34,11 @@ from .tweet_manipulations import *
 from .likes_replies_generator import LikesRepliesGenerator
 
 def index(request):
-    t = TweetManipulations()
-    t.find_syns('irredeemable')
-    t.find_syns('hate')
-    t.find_syns('dude')
-    t.find_syns('kick')
+    # t = TweetManipulations()
+    # t.find_syns('irredeemable')
+    # t.find_syns('hate')
+    # t.find_syns('dude')
+    # t.find_syns('kick')
 
     request_complete = False
     predicted_label = None
@@ -65,15 +65,16 @@ def index(request):
                 w.download_user_tweets(username)
                 w.get_user_assets_ready(username)
                 w.get_rare_words(username)
-                w.get_generation_assets_ready()
+                w.get_syns_rare_words(username)
+                # w.get_generation_assets_ready()
 
-                # w.get_categorization_assets_ready()
-                # subs_to_generate = w.categorize_user(username)
-                w.subs_eachuser[username] = [0, 1, 2]
-                predicted_tweets = w.get_tweet_predictions(username, prompt)
-                predicted_label = 'success!'
-                user_alias = username # coati: retrieve person's alias
-                request_complete = True
+                # # w.get_categorization_assets_ready()
+                # # subs_to_generate = w.categorize_user(username)
+                # w.subs_eachuser[username] = [0, 1, 2]
+                # predicted_tweets = w.get_tweet_predictions(username, prompt)
+                # predicted_label = 'success!'
+                # user_alias = username # coati: retrieve person's alias
+                # request_complete = True
 
             except RuntimeError as re:
                 predicted_label = re

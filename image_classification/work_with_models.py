@@ -46,7 +46,7 @@ path_models = 'static\\models'
 path_nums200 = 'static\\nums200'
 path_toks200 = 'static\\toks200'
 path_tweets = 'static\\tweets-by-user'
-max_tweets = 300
+max_tweets = 999
 tweets_to_analyze = 100
 num_to_return = 3
 
@@ -125,9 +125,17 @@ class WorkWithModels:
             self.t.rare_words_user = self.rare_words_user
         # for i in range(0, len(self.rare_words_user)):
         #     print(self.rare_words_user[i])
-
-
     
+    def get_syns_rare_words(self, username):
+        try:
+            for i in range(0, len(self.rare_words_user)):
+                word = self.rare_words_user[i]
+                syns = self.t.find_syns(word)
+                if len(syns) > 0:
+                    print('Synonyms for ' + word + ': ' + ' '.join(syns))
+        except Exception as e:
+            print(e)
+
     def get_categorization_assets_ready(self):
         print('Getting assets for categorization, hang tight................')
         print('Loading dataframes...')
