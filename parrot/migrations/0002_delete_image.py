@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('image_classification', '0001_initial'),
+        ('parrot', '0001_initial'),
     ]
 
     operations = [

@@ -65,9 +65,11 @@ def index(request):
                 w.download_user_tweets(username)
                 w.get_user_assets_ready(username)
                 w.get_rare_words(username)
-                # w.get_syns_rare_words(username)
-                w.get_generation_assets_ready()
-                vocab = w.get_vocab_of_learner(0)
+                w.get_syns_rare_words(username)
+                # w.get_generation_assets_ready()
+                # vocab = w.get_vocab_of_learner(0)
+
+                
 
                 # # w.get_categorization_assets_ready()
                 # # subs_to_generate = w.categorize_user(username)
@@ -97,4 +99,4 @@ def index(request):
         'num_replies_str_1': num_replies_str_1,
         'request_complete': request_complete
     }
-    return render(request, 'image_classification/index.html', context)
+    return render(request, 'parrot/index.html', context)

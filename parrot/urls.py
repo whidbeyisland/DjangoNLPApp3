@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from . import views
 
 
-app_name = 'image_classification'
+app_name = 'parrot'
 
 urlpatterns = [
     # two paths: with or without given image

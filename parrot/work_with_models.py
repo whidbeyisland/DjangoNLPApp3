@@ -141,11 +141,12 @@ class WorkWithModels:
     
     def get_vocab_of_learner(self, sub_index):
         try:
-            nums200 = self.nums200_eachsub[sub_index]
-            print(type(nums200.vocab))
-            return nums200.vocab
+            num = Numericalize()
+            num.setup(self.toks200_eachsub[sub_index])
+            return num.vocab
         except Exception as e:
             print(e)
+            return []
 
 
 
