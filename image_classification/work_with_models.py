@@ -90,7 +90,7 @@ class WorkWithModels:
         self.d = d
         self.t = t
     
-
+    
 
     # methods to get user's distinctive vocabulary
     def get_user_assets_ready(self, username):

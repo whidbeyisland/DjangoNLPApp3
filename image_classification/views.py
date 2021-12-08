@@ -34,6 +34,12 @@ from .tweet_manipulations import *
 from .likes_replies_generator import LikesRepliesGenerator
 
 def index(request):
+    t = TweetManipulations()
+    t.find_syns('irredeemable')
+    t.find_syns('hate')
+    t.find_syns('dude')
+    t.find_syns('kick')
+
     request_complete = False
     predicted_label = None
     today = datetime.now()
