@@ -66,18 +66,18 @@ def index(request):
                 w.get_user_assets_ready(username)
                 w.get_rare_words(username)
                 w.get_syns_rare_words(username)
-                # w.get_generation_assets_ready()
+                w.get_generation_assets_ready()
                 # vocab = w.get_vocab_of_learner(0)
 
                 
 
-                # # w.get_categorization_assets_ready()
-                # # subs_to_generate = w.categorize_user(username)
-                # w.subs_eachuser[username] = [0, 1, 2]
-                # predicted_tweets = w.get_tweet_predictions(username, prompt)
-                # predicted_label = 'success!'
-                # user_alias = username # coati: retrieve person's alias
-                # request_complete = True
+                # w.get_categorization_assets_ready()
+                # subs_to_generate = w.categorize_user(username)
+                w.subs_eachuser[username] = [0, 1, 2]
+                predicted_tweets = w.get_tweet_predictions(username, prompt)
+                predicted_label = 'success!'
+                user_alias = username # coati: retrieve person's alias
+                request_complete = True
 
             except RuntimeError as re:
                 predicted_label = re

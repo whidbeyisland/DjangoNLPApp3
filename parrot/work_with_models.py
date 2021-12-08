@@ -347,7 +347,7 @@ class WorkWithModels:
         # check if user uses emojis
         percent_capitalized = 0
         percent_punctuated = 0
-        tweets_to_inspect = 10
+        tweets_to_inspect = 30
         tweets_capitalized = 0
         tweets_punctuated = 0
 

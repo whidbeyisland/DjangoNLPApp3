@@ -1,13 +1,13 @@
-# Django + PyTorch Image Classification App
+# Parrot: Tweet Generation App
 
-A simple Django web app classifying uploaded images using a pretrained PyTorch DenseNet.
+Parrot is an experimental app for generating fake tweets in the style of a chosen Twitter user, about a chosen topic.
 
-As an example of how to integrate PyTorch with Django and deploy it on Heroku.
+To create viable tweets, Parrot leverages several modern machine learning and natural language processing technologies, including the FastAI framework for PyTorch, purpose-built generative and classificatory language models, and the WordNet database of lexical similarity.
 
-* Live demo: [Heroku](https://pytorch-django.herokuapp.com/)
-* Corresponding blog post: [Using PyTorch Inside a Django App](https://stefanbschneider.github.io/blog/pytorch-django)
+The Python business logic is hosted in a heavily modified version of "Pytorch-Django" by Stefan Schneider, as a way of quickly getting a Django front-end up and running. All models used were developed externally in Colab Notebooks.
 
-<img src="docs/demo.gif" alt="image classification demo" width="30%" />
+<img src="docs/elon_musk_fine_art.png" width="50%" />
+<img src="docs/jimmy_wales_spiders.png" width="50%" />
 
 ## Setup
 
@@ -15,17 +15,9 @@ As an example of how to integrate PyTorch with Django and deploy it on Heroku.
 pip install -r requirements
 ```
 
-## Usage
-
-Live demo: [Heroku](https://pytorch-django.herokuapp.com/)
-
 ### Development
 
 ```
 python manage.py runserver
 ```
 The app is running on http://localhost:8000/
-
-### Production Deployment on Heroku
-
-See description in [blog post](https://stefanbschneider.github.io/blog/pytorch-django).
