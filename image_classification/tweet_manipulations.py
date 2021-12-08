@@ -106,6 +106,14 @@ class TweetManipulations:
             stub = 'Oh my god, ' + stub
 
         return stub
+    
+    
+
+    # EXPERIMENTAL: may not use
+    def intro_from_rare_words(self, rare_words, learn_vocab):
+        pass
+
+
 
     def is_plural(self, topic):
         # coati: not perfect but just covering most common irregular plurals, maybe find an Excel of thousands of them
@@ -233,7 +241,8 @@ class TweetManipulations:
         if likely_proper_name == True:
             all_syns = []
 
-        return all_syns    
+        return all_syns
+    
 
     
     # currently not using this, "synsets" not a high-quality synonym database, but may try to make this

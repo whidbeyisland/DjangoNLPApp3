@@ -106,6 +106,9 @@ class WorkWithModels:
         self.num_user.setup(self.toks200_user)
         coll_repr(self.num_user.vocab,20)
     
+
+
+    # EXPERIMENTAL: may not use
     def get_rare_words(self, username):
         # coati: should specifically look through the *user's* texts, i.e. have user-specific assets loaded from
         # .pkl's (or if you're only storing the user's vocabulary, a .txt)
@@ -135,6 +138,16 @@ class WorkWithModels:
                     print('Synonyms for ' + word + ': ' + ' '.join(syns))
         except Exception as e:
             print(e)
+    
+    def get_vocab_of_learner(self, sub_index):
+        try:
+            nums200 = self.nums200_eachsub[sub_index]
+            print(type(nums200.vocab))
+            return nums200.vocab
+        except Exception as e:
+            print(e)
+
+
 
     def get_categorization_assets_ready(self):
         print('Getting assets for categorization, hang tight................')

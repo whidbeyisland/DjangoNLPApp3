@@ -65,8 +65,9 @@ def index(request):
                 w.download_user_tweets(username)
                 w.get_user_assets_ready(username)
                 w.get_rare_words(username)
-                w.get_syns_rare_words(username)
-                # w.get_generation_assets_ready()
+                # w.get_syns_rare_words(username)
+                w.get_generation_assets_ready()
+                vocab = w.get_vocab_of_learner(0)
 
                 # # w.get_categorization_assets_ready()
                 # # subs_to_generate = w.categorize_user(username)
