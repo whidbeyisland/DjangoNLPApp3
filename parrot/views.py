@@ -22,6 +22,7 @@ from fastai.text.all import *
 #from pathlib import Path
 
 nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 from nltk.corpus import wordnet
 from nltk import FreqDist
 from string import punctuation
@@ -34,6 +35,13 @@ from .tweet_manipulations import *
 from .likes_replies_generator import LikesRepliesGenerator
 
 def index(request):
+    
+    # print(nltk.tag.pos_tag(['lgbtq']))
+    # print(nltk.tag.pos_tag(['libdems']))
+    # print(nltk.tag.pos_tag(['alamo']))
+    # print(nltk.tag.pos_tag(['retweeted']))
+    # print(nltk.tag.pos_tag(['misunderstood']))
+
     # t = TweetManipulations()
     # t.find_syns('irredeemable')
     # t.find_syns('hate')
@@ -66,6 +74,11 @@ def index(request):
                 w.get_user_assets_ready(username)
                 w.get_rare_words(username)
                 w.get_syns_rare_words(username)
+                # w.get_POS('retweeted', 'jimmy_wales')
+                # w.get_POS('bitcoin', 'jimmy_wales')
+                # w.get_POS('covid19', 'jimmy_wales')
+                # w.get_POS('categories', 'jimmy_wales')
+                # w.get_POS('ludicrous', 'jimmy_wales')
                 w.get_generation_assets_ready()
                 # vocab = w.get_vocab_of_learner(0)
 

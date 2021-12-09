@@ -23,6 +23,7 @@ from torchtext.data import get_tokenizer
 from fastai.text.all import *
 
 nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 from nltk.corpus import wordnet
 from nltk import FreqDist
 from string import punctuation
@@ -123,16 +124,28 @@ class WorkWithModels:
                         elif word[-2:] in ['er', 'in', 'st', 'th', 'ty']: lemma = word[:-2]
                         elif word[-3:] in ['ing']: lemma = word[:-3]
                         if not s.find(lemma[:-1].encode()) != -1:
-                            self.rare_words_user.append(word)
+                            self.rare_words_user.append([word, self.get_POS(word, username)])
             # coati: maybe store these variables differently?
             self.t.rare_words_user = self.rare_words_user
         # for i in range(0, len(self.rare_words_user)):
         #     print(self.rare_words_user[i])
+
+    def get_POS(self, word, username):
+        for i in range(0, len(self.txts_user)):
+            tweet = self.txts_user[i].split()
+            if word in tweet:
+                index = tweet.index(word)
+                pos_tweet_predicted = nltk.tag.pos_tag(tweet)
+                # print(pos_tweet_predicted)
+                pos_word_predicted = pos_tweet_predicted[index]
+                print(pos_word_predicted)
+                return pos_word_predicted[0]
+        return 'NN'
     
     def get_syns_rare_words(self, username):
         try:
             for i in range(0, len(self.rare_words_user)):
-                word = self.rare_words_user[i]
+                word = self.rare_words_user[i][0]
                 syns = self.t.find_syns(word)
                 if len(syns) > 0:
                     print('Synonyms for ' + word + ': ' + ' '.join(syns))
@@ -376,7 +389,7 @@ class WorkWithModels:
         preds_manipulated_all_subs = []
         for i in range(0, len(subs_thisuser)):
             cur_sub = subs_thisuser[i]
-            intro = self.t.intro_from_prompt(topic)
+            intro = self.t.intro_from_prompt(topic, self.rare_words_user)
             preds = self.learn_eachsub[cur_sub].predict(intro, num_words, temperature=0.75)
                     # racc: [self.learn_eachsub ... for _ in range(n_sentences)]
             # preds = [self.learn_eachsub[cur_sub].predict(intro, num_words, temperature=0.75) for _ in range(num_sentences)]

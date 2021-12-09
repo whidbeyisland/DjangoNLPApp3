@@ -43,8 +43,77 @@ class TweetManipulations:
     def __init__(self):
         pass
 
+    def intro_from_prompt(self, topic, rare_words):
+        print('got here 2')
+        topic = topic.strip()
+
+        # COATI: in future, pick the most applicable rare words differently
+        most_applicable_rare_words = rare_words
+        rand_rare_word = random.randint(0, len(most_applicable_rare_words))
+        rare_word = most_applicable_rare_words[rand_rare_word]
+
+        index = 1 if self.is_plural(topic) else 0
+        rand = random.randint(0, 100)
+        intro = self.pick_stub(topic, index, rare_word, rand)
+
+        return intro
+
+    def pick_stub(self, topic, index, rare_word, rand):
+        print('got here 1')
+        if rare_word[1] == 'NNP': # proper noun, singular
+            if 0 <= rand < 25:
+                stub = 'I really like ' + rare_word[0] + ' for ' + topic
+            elif 25 <= rand < 50:
+                stub = 'I love ' + rare_word[0] + ' for ' + topic
+            elif 50 <= rand < 75:
+                stub = rare_word[0] + ' for ' + topic + ' is just'
+            elif rand >= 75:
+                stub = rare_word[0] + ' for ' + topic + ' really makes me think that'
+        elif rare_word[1] == 'NN': # common noun, singular
+            if 0 <= rand < 25:
+                stub = 'I really like the ' + rare_word[0] + ' for ' + topic
+            elif 25 <= rand < 50:
+                stub = 'I love the ' + rare_word[0] + ' for ' + topic
+            elif 50 <= rand < 75:
+                stub = 'the ' + rare_word[0] + ' for ' + topic + ' is just'
+            elif rand >= 75:
+                stub = 'the ' + rare_word[0] + ' for ' + topic + ' really makes me think that'
+        elif rare_word[1] == 'NNS': # plural noun
+            if 0 <= rand < 25:
+                stub = 'I really like ' + rare_word[0] + ' for ' + topic
+            elif 25 <= rand < 50:
+                stub = 'I love ' + rare_word[0] + ' for ' + topic
+            elif 50 <= rand < 75:
+                stub = rare_word[0] + ' for ' + topic + ' are just'
+            elif rand >= 75:
+                stub = rare_word[0] + ' for ' + topic + ' really make me think that'
+        elif rare_word[1] == 'JJ': # adjective
+            if 0 <= rand < 25:
+                stub = 'I really like the ' + rare_word[0] + ' ' + topic
+            elif 25 <= rand < 50:
+                stub = 'I love the ' + rare_word[0] + ' ' + topic
+            elif 50 <= rand < 75:
+                if index == 0:
+                    stub = 'the ' + rare_word[0] + ' ' + topic + ' is just'
+                else:
+                    stub = 'the ' + rare_word[0] + ' ' + topic + ' are just'
+            elif rand >= 75:
+                if index == 0:
+                    stub = 'the ' + rare_word[0] + ' ' + topic + ' really makes me think that'
+                else:
+                    stub = 'the ' + rare_word[0] + ' ' + topic + ' really make me think that'
+        elif rare_word[1][:2] == 'VB': # verb, any tense/aspect
+            if index == 0:
+                stub = topic + ' makes me want to ' + rare_word[0]
+            else:
+                stub = topic + ' make me want to ' + rare_word[0]
+        else:
+            stub = 'I really like ' + rare_word[0] + ' for ' + topic
+
+        return stub
+
     # coati: create intros like "X is just...", "I love X because..."
-    def intro_from_prompt(self, topic):
+    def intro_from_prompt_2(self, topic):
         topic = topic.strip()
 
         index = 1 if self.is_plural(topic) else 0
@@ -53,7 +122,7 @@ class TweetManipulations:
 
         return intro
     
-    def pick_stub(self, topic, rand, index):
+    def pick_stub_2(self, topic, rand, index):
         if 0 <= rand < 10:
             stub = 'I really like ' + topic
         elif 10 <= rand < 20:
@@ -264,7 +333,7 @@ class TweetManipulations:
                 best_word_simil = 0
                 
                 try:
-                    syn1 = wordnet.synsets(rare_words[i])[0]
+                    syn1 = wordnet.synsets(rare_words[i][0])[0]
                     for word in words:
                         try:
                             syn2 = wordnet.synsets(word)[0]
@@ -283,7 +352,7 @@ class TweetManipulations:
                     pass # print('1 ' + str(e))
         if len(words_to_replace) > 0:
             for pair in words_to_replace:
-                words[pair[1]] = rare_words[pair[1]]
+                words[pair[1]] = rare_words[pair[1]][0]
         pred = ' '.join(words)
 
         return pred
