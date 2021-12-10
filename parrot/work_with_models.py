@@ -106,10 +106,7 @@ class WorkWithModels:
         self.num_user = Numericalize()
         self.num_user.setup(self.toks200_user)
         coll_repr(self.num_user.vocab,20)
-    
 
-
-    # EXPERIMENTAL: may not use
     def get_rare_words(self, username):
         # coati: should specifically look through the *user's* texts, i.e. have user-specific assets loaded from
         # .pkl's (or if you're only storing the user's vocabulary, a .txt)
@@ -127,8 +124,6 @@ class WorkWithModels:
                             self.rare_words_user.append([word, self.get_POS(word, username)])
             # coati: maybe store these variables differently?
             self.t.rare_words_user = self.rare_words_user
-        # for i in range(0, len(self.rare_words_user)):
-        #     print(self.rare_words_user[i])
 
     def get_POS(self, word, username):
         for i in range(0, len(self.txts_user)):
@@ -138,10 +133,10 @@ class WorkWithModels:
                 pos_tweet_predicted = nltk.tag.pos_tag(tweet)
                 # print(pos_tweet_predicted)
                 pos_word_predicted = pos_tweet_predicted[index]
-                print(pos_word_predicted)
-                return pos_word_predicted[0]
+                return pos_word_predicted[1]
         return 'NN'
     
+    # coati: not currently using this
     def get_syns_rare_words(self, username):
         try:
             for i in range(0, len(self.rare_words_user)):
@@ -160,8 +155,6 @@ class WorkWithModels:
         except Exception as e:
             print(e)
             return []
-
-
 
     def get_categorization_assets_ready(self):
         print('Getting assets for categorization, hang tight................')
@@ -361,28 +354,35 @@ class WorkWithModels:
         percent_capitalized = 0
         percent_punctuated = 0
         tweets_to_inspect = 30
+        tweets_uncapitalized = 0
         tweets_capitalized = 0
         tweets_punctuated = 0
 
         try:
             for i in range(0, tweets_to_inspect):
                 cur_tweet = self.df_user.loc[i, 'Content'].strip()
+
+                # for checking capitalization of the user's tweets, leave out ones that start with "@"
                 if re.match('^[A-Z]', cur_tweet):
                     tweets_capitalized = tweets_capitalized + 1
+                elif re.match('^[a-z]', cur_tweet):
+                    tweets_uncapitalized = tweets_uncapitalized + 1
+                
                 if cur_tweet[-1] in punctuation:
                     tweets_punctuated = tweets_punctuated + 1
-            percent_capitalized = tweets_capitalized / tweets_to_inspect
+            
+            percent_capitalized = tweets_capitalized / (tweets_capitalized + tweets_uncapitalized)
             percent_punctuated = tweets_punctuated / tweets_to_inspect
             # print(str(percent_capitalized) + '.........' + str(percent_punctuated))
             return [percent_capitalized, percent_punctuated]
         except Exception as e:
-            print(e)
+            # might be a "divide by zero" error, so just return .5 for both
             return [.5, .5]
 
     def get_tweet_predictions(self, username, topic):
         num_words = 20
         # coati: for now just 1 sentence, but in the future you can generate multiple and pick the best one by
-        # some metric
+        # some metric, like BLEU grammatical correctness
         num_sentences = 1
 
         subs_thisuser = self.subs_eachuser[username]

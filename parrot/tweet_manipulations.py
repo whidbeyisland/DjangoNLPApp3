@@ -44,19 +44,25 @@ class TweetManipulations:
         pass
 
     def intro_from_prompt(self, topic, rare_words):
-        print('got here 2')
         topic = topic.strip()
+        intro = topic + ' is' # failsafe in case of exception
 
         # some variables for generating random intros
         index = 1 if self.is_plural(topic) else 0
-        rand = random.randint(0, 100)
+        rand = random.randint(0, 99)
+        rand_use_rare_word = random.randint(0, 9)
+        use_rare_word_threshold = 5
 
         most_applicable_rare_words = self.find_closest_rare_words(topic, rare_words)
-        # if any of the person's rare words were similar to the topic, use them to generate an intro
+        # if any of the person's rare words were similar to the topic, then maybe use them to generate an intro
         if len(most_applicable_rare_words) > 0:
-            rand_rare_word = random.randint(0, len(most_applicable_rare_words))
-            rare_word = most_applicable_rare_words[rand_rare_word]
-            intro = self.pick_stub_with_rare_word(topic, index, rare_word, rand)
+            if rand_use_rare_word >= use_rare_word_threshold:
+                rand_rare_word = random.randint(0, len(most_applicable_rare_words) - 1)
+                print('index ' + str(rand_rare_word) + ' out of ' + str(len(most_applicable_rare_words)))
+                rare_word = most_applicable_rare_words[rand_rare_word]
+                intro = self.pick_stub_with_rare_word(topic, index, rare_word, rand)
+            else:
+                intro = self.pick_stub(topic, rand, index)
         # otherwise, only use the topic
         else:
             intro = self.pick_stub(topic, rand, index)
@@ -64,7 +70,6 @@ class TweetManipulations:
         return intro
 
     def pick_stub_with_rare_word(self, topic, index, rare_word, rand):
-        print('got here 1')
         if rare_word[1] == 'NNP': # proper noun, singular
             if 0 <= rand < 25:
                 stub = 'I really like ' + rare_word[0] + ' for ' + topic
@@ -93,20 +98,24 @@ class TweetManipulations:
             elif rand >= 75:
                 stub = rare_word[0] + ' for ' + topic + ' really make me think that'
         elif rare_word[1] == 'JJ': # adjective
-            if 0 <= rand < 25:
+            if 0 <= rand < 16:
                 stub = 'I really like the ' + rare_word[0] + ' ' + topic
-            elif 25 <= rand < 50:
+            elif 16 <= rand < 33:
                 stub = 'I love the ' + rare_word[0] + ' ' + topic
-            elif 50 <= rand < 75:
+            elif 33 <= rand < 50:
                 if index == 0:
                     stub = 'the ' + rare_word[0] + ' ' + topic + ' is just'
                 else:
                     stub = 'the ' + rare_word[0] + ' ' + topic + ' are just'
-            elif rand >= 75:
+            elif 50 <= rand < 66:
                 if index == 0:
                     stub = 'the ' + rare_word[0] + ' ' + topic + ' really makes me think that'
                 else:
                     stub = 'the ' + rare_word[0] + ' ' + topic + ' really make me think that'
+            elif 66 <= rand < 83:
+                stub = 'being ' + rare_word[0] + ' for ' + topic + 'is'
+            elif rand >= 83:
+                stub = 'being ' + rare_word[0] + ' for ' + topic + 'is just'
         elif rare_word[1][:2] == 'VB': # verb, any tense/aspect
             # coati: make separate paths for different tenses/aspects. can you inflect non-present verbs to present?
             if 0 <= rand < 50:
@@ -277,15 +286,18 @@ class TweetManipulations:
         return pred
     
     def alter_capitalization(self, pred, user_styles):
-        rand = random.randint(0, 10)
+        # coati: split pred into sentences somehow but keep their original punctuation, probably with a separate
+        # method
+        rand = random.randint(0, 9)
+        # pred = re.split('\. |\? |! ', pred)
         if rand < user_styles[0]:
             return pred.capitalize()
         else:
             return pred.lower()
     
     def alter_punctuation(self, pred, user_styles):
-        rand = random.randint(0, 10)
-        rand2 = random.randint(0, 5)
+        rand = random.randint(0, 9)
+        rand2 = random.randint(0, 4)
         possible_punctuation = ['.', '.', '.', '?', '!']
         if rand < user_styles[1]:
             return pred + possible_punctuation[rand2]
@@ -297,7 +309,6 @@ class TweetManipulations:
         return pred
 
     def find_closest_rare_words(self, topic, rare_words):
-        print('got here 3')
         all_close_rare_words = []
         try:
             # look at top 3 definitions of the topic separately --- the topic is just provided as a word,
@@ -308,7 +319,7 @@ class TweetManipulations:
                 if i < 3:
                     syn1_this_def = syn1[i]
                     for j in range(0, len(rare_words)):
-                        print(rare_words[j][0])
+                        # print(rare_words[j][0])
                         try:
                             # look at top 3 definitions of the rare word separately
                             syn2 = wordnet.synsets(rare_words[j][0])
@@ -317,10 +328,11 @@ class TweetManipulations:
                                     syn2_this_def = syn2[k]
                                     simil = syn1_this_def.wup_similarity(syn2_this_def)
                                     if simil is not None:
-                                        print('simil.......... ' + str(simil))
-                                        if simil > 0: #coati: keep working on this
+                                        if simil > 0.4:
+                                            print('simil.......... ' + str(simil))
                                             if rare_words[j] not in all_close_rare_words:
-                                                all_close_rare_words.add(rare_words[j])
+                                                all_close_rare_words.append(rare_words[j])
+                                            # print(len(all_close_rare_words))
                                     # if k.pos == 'n' and rare_words[j][1][0] == 'N':
                                     #     pass
                                     # elif k.pos == 'v' and rare_words[j][1][0:2] == 'VB':
@@ -333,7 +345,7 @@ class TweetManipulations:
                             pass
         except:
             pass
-        print(' '.join(all_close_rare_words))
+        # print(len(all_close_rare_words))
         return all_close_rare_words
     
     def find_syns(self, queried_word):
@@ -361,48 +373,3 @@ class TweetManipulations:
             all_syns = []
 
         return all_syns
-    
-
-    
-    # currently not using this, "synsets" not a high-quality synonym database, but may try to make this
-    # method usable later
-    def insert_rare_words(self, pred, rare_words):
-        # rare_words.append('banana')
-        # rare_words.append('fox')
-        random.shuffle(rare_words)
-        threshold = 0.5
-        replaced_so_far = 0
-        max_replace_count = 5
-
-        # for each of the person's rare words, find the word in the sentence that's the most similar to it
-        # and above the threshold (if such a word exists), and then replace it with the rare word
-        words = pred.split()
-        words_to_replace = []
-        for i in range(0, len(rare_words)):
-            if replaced_so_far < max_replace_count:
-                best_word_simil = 0
-                
-                try:
-                    syn1 = wordnet.synsets(rare_words[i][0])[0]
-                    for word in words:
-                        try:
-                            syn2 = wordnet.synsets(word)[0]
-                            simil = syn1.wup_similarity(syn2)
-                            if simil is not None:
-                                ind = words.index(word)
-                                # if you've found a new best word in the sentence
-                                if simil > threshold and simil > best_word_simil:
-                                    best_word_simil = simil
-                                    replaced_so_far += 1
-                                    if best_word_simil > 0:
-                                        words_to_replace.append([ind, i])
-                        except Exception as e:
-                            pass # print('2 ' + str(e))
-                except Exception as e:
-                    pass # print('1 ' + str(e))
-        if len(words_to_replace) > 0:
-            for pair in words_to_replace:
-                words[pair[1]] = rare_words[pair[1]][0]
-        pred = ' '.join(words)
-
-        return pred

@@ -35,24 +35,21 @@ from .tweet_manipulations import *
 from .likes_replies_generator import LikesRepliesGenerator
 
 def index(request):
-    syn1 = wordnet.synsets('vaccine')
-    syn2 = wordnet.synsets('illness')
-    print(len(syn1))
-    print(len(syn2))
-    for i in range(0, len(syn1)):
-        for j in range(0, len(syn2)):
-            try:
-                syn1_a = syn1[i]
-                syn2_a = syn2[j]
-                print(str(i) + "......" + str(j))
-                print('wup: ' + str(syn1_a.wup_similarity(syn2_a)))
-                print('path: ' + str(syn1_a.path_similarity(syn2_a)))
-                print('lch: ' + str(syn1_a.lch_similarity(syn2_a)))
-            except:
-                pass
-
-
-
+    # syn1 = wordnet.synsets('vaccine')
+    # syn2 = wordnet.synsets('illness')
+    # print(len(syn1))
+    # print(len(syn2))
+    # for i in range(0, len(syn1)):
+    #     for j in range(0, len(syn2)):
+    #         try:
+    #             syn1_a = syn1[i]
+    #             syn2_a = syn2[j]
+    #             print(str(i) + "......" + str(j))
+    #             print('wup: ' + str(syn1_a.wup_similarity(syn2_a)))
+    #             print('path: ' + str(syn1_a.path_similarity(syn2_a)))
+    #             print('lch: ' + str(syn1_a.lch_similarity(syn2_a)))
+    #         except:
+    #             pass
     
     # print(nltk.tag.pos_tag(['lgbtq']))
     # print(nltk.tag.pos_tag(['libdems']))
@@ -84,35 +81,42 @@ def index(request):
             prompt = form.cleaned_data['prompt']
 
             try:
+                # initialize basic classes to call methods from
                 d = DownloadPkls()
                 t = TweetManipulations()
                 w = WorkWithModels(d, t)
 
+                # download the user's tweets
                 w.download_user_tweets(username)
                 w.get_user_assets_ready(username)
+
+                # get the user's most distinctive words: words they have used at least 3x in tweets, which are not in
+                # the N most common words of each part of speech, or in a corpus of words used in Simpsons episodes
                 w.get_rare_words(username)
-                w.get_syns_rare_words(username)
-                # w.get_POS('retweeted', 'jimmy_wales')
-                # w.get_POS('bitcoin', 'jimmy_wales')
-                # w.get_POS('covid19', 'jimmy_wales')
-                # w.get_POS('categories', 'jimmy_wales')
-                # w.get_POS('ludicrous', 'jimmy_wales')
+                # w.get_syns_rare_words(username)
+
+                # the tweets will be generated based on 11 "subculture" models
                 w.get_generation_assets_ready()
-                # vocab = w.get_vocab_of_learner(0)
 
-                
-
+                # the user will be categorized into 3 of 11 subcultures, e.g. "tech-nerd", "sports", "astrology".
+                # language models trained on Twitter users from *these subcultures* will be used in lieu of a model
+                # trained on the chosen user specifically, to save time and for more diverse training data
+                        # coati: find a way to make the categorization process faster, like train a smaller model.
+                        # until then, just using first 3 subcultures as dummy variables
                 # w.get_categorization_assets_ready()
                 # subs_to_generate = w.categorize_user(username)
                 w.subs_eachuser[username] = [0, 1, 2]
+
+                # finally, generate tweets based on each of the 3 chosen subcultures
                 predicted_tweets = w.get_tweet_predictions(username, prompt)
+
+                # get other variables ready for the index.html homepage
                 predicted_label = 'success!'
                 user_alias = username # coati: retrieve person's alias
                 request_complete = True
 
             except RuntimeError as re:
                 predicted_label = re
-                # predicted_label = "Prediction Error"
 
     else:
         form = TextEntryForm()
