@@ -47,18 +47,23 @@ class TweetManipulations:
         print('got here 2')
         topic = topic.strip()
 
-        # COATI: in future, pick the most applicable rare words differently
-        most_applicable_rare_words = rare_words
-        rand_rare_word = random.randint(0, len(most_applicable_rare_words))
-        rare_word = most_applicable_rare_words[rand_rare_word]
-
+        # some variables for generating random intros
         index = 1 if self.is_plural(topic) else 0
         rand = random.randint(0, 100)
-        intro = self.pick_stub(topic, index, rare_word, rand)
+
+        most_applicable_rare_words = self.find_closest_rare_words(topic, rare_words)
+        # if any of the person's rare words were similar to the topic, use them to generate an intro
+        if len(most_applicable_rare_words) > 0:
+            rand_rare_word = random.randint(0, len(most_applicable_rare_words))
+            rare_word = most_applicable_rare_words[rand_rare_word]
+            intro = self.pick_stub_with_rare_word(topic, index, rare_word, rand)
+        # otherwise, only use the topic
+        else:
+            intro = self.pick_stub(topic, rand, index)
 
         return intro
 
-    def pick_stub(self, topic, index, rare_word, rand):
+    def pick_stub_with_rare_word(self, topic, index, rare_word, rand):
         print('got here 1')
         if rare_word[1] == 'NNP': # proper noun, singular
             if 0 <= rand < 25:
@@ -103,26 +108,41 @@ class TweetManipulations:
                 else:
                     stub = 'the ' + rare_word[0] + ' ' + topic + ' really make me think that'
         elif rare_word[1][:2] == 'VB': # verb, any tense/aspect
-            if index == 0:
-                stub = topic + ' makes me want to ' + rare_word[0]
+            # coati: make separate paths for different tenses/aspects. can you inflect non-present verbs to present?
+            if 0 <= rand < 50:
+                if index == 0:
+                    stub = topic + ' makes me want to ' + rare_word[0]
+                else:
+                    stub = topic + ' make me want to ' + rare_word[0]
             else:
-                stub = topic + ' make me want to ' + rare_word[0]
+                if index == 0:
+                    stub = topic + ' really makes me want to ' + rare_word[0]
+                else:
+                    stub = topic + ' really make me want to ' + rare_word[0]
+        elif rare_word[1][:2] == 'RB': # adverb
+            if 0 <= rand < 50:
+                if index == 0:
+                    stub = topic + ' is ' + rare_word[0]
+                else:
+                    stub = topic + ' are ' + rare_word[0]
+            else:
+                if index == 0:
+                    stub = rare_word[0] + ', ' + topic + ' is'
+                else:
+                    stub = rare_word[0] + ', ' + topic + ' are'
         else:
-            stub = 'I really like ' + rare_word[0] + ' for ' + topic
+            if 0 <= rand < 25:
+                stub = 'I really like ' + rare_word[0] + ' for ' + topic
+            elif 25 <= rand < 50:
+                stub = 'I love ' + rare_word[0] + ' for ' + topic
+            elif 50 <= rand < 75:
+                stub = rare_word[0] + ' for ' + topic + ' is just'
+            elif rand >= 75:
+                stub = rare_word[0] + ' for ' + topic + ' really makes me think that'
 
         return stub
-
-    # coati: create intros like "X is just...", "I love X because..."
-    def intro_from_prompt_2(self, topic):
-        topic = topic.strip()
-
-        index = 1 if self.is_plural(topic) else 0
-        rand = random.randint(0, 100)
-        intro = self.pick_stub(topic, rand, index)
-
-        return intro
     
-    def pick_stub_2(self, topic, rand, index):
+    def pick_stub(self, topic, rand, index):
         if 0 <= rand < 10:
             stub = 'I really like ' + topic
         elif 10 <= rand < 20:
@@ -175,14 +195,6 @@ class TweetManipulations:
             stub = 'Oh my god, ' + stub
 
         return stub
-    
-    
-
-    # EXPERIMENTAL: may not use
-    def intro_from_rare_words(self, rare_words, learn_vocab):
-        pass
-
-
 
     def is_plural(self, topic):
         # coati: not perfect but just covering most common irregular plurals, maybe find an Excel of thousands of them
@@ -247,7 +259,7 @@ class TweetManipulations:
         pred = re.sub(' n\'t', 'n\'t', pred)
         pred = re.sub(' nt', 'nt', pred)
 
-        # coati: has a tendency to insert "n't" where it shouldn't be
+        # making sure "n't" not inserted where it shouldn't be --- model has a tendency to do that
         valid_neg_modals = [
             'isn\'t', 'aren\'t', 'ain\'t', 'doesn\'t', 'don\'t', 'can\'t', 'couldn\'t', 'won\'t', 'wouldn\'t',
             'shan\'t', 'shouldn\'t', 'mayn\'t', 'mightn\'t'
@@ -260,8 +272,6 @@ class TweetManipulations:
                     pred_word = pred_word[:-3]
                     pred_words[i] = pred_word
         pred = ' '.join(pred_words)
-        
-        # pred = re.sub(r' (^(do|does|is|are|ai|ca|wo|would|might))n\'t', r' \1', pred)
 
         pred = pred.rstrip(punctuation)
         return pred
@@ -285,6 +295,46 @@ class TweetManipulations:
     def truncate_tail(self, pred):
         pred = re.sub('\.[^\.]*$', '', pred)
         return pred
+
+    def find_closest_rare_words(self, topic, rare_words):
+        print('got here 3')
+        all_close_rare_words = []
+        try:
+            # look at top 3 definitions of the topic separately --- the topic is just provided as a word,
+            # so you can't tell what POS the user meant it as (e.g. "abstract" could have been meant as a
+            # noun, verb, or adjective)
+            syn1 = wordnet.synsets(topic)
+            for i in range(0, len(syn1)):
+                if i < 3:
+                    syn1_this_def = syn1[i]
+                    for j in range(0, len(rare_words)):
+                        print(rare_words[j][0])
+                        try:
+                            # look at top 3 definitions of the rare word separately
+                            syn2 = wordnet.synsets(rare_words[j][0])
+                            for k in range(0, len(syn2)):
+                                if k < 3:
+                                    syn2_this_def = syn2[k]
+                                    simil = syn1_this_def.wup_similarity(syn2_this_def)
+                                    if simil is not None:
+                                        print('simil.......... ' + str(simil))
+                                        if simil > 0: #coati: keep working on this
+                                            if rare_words[j] not in all_close_rare_words:
+                                                all_close_rare_words.add(rare_words[j])
+                                    # if k.pos == 'n' and rare_words[j][1][0] == 'N':
+                                    #     pass
+                                    # elif k.pos == 'v' and rare_words[j][1][0:2] == 'VB':
+                                    #     pass
+                                    # elif k.pos == 'adj' and rare_words[j][1][0:2] == 'JJ':
+                                    #     pass
+                                    # else:
+                                    #     pass
+                        except:
+                            pass
+        except:
+            pass
+        print(' '.join(all_close_rare_words))
+        return all_close_rare_words
     
     def find_syns(self, queried_word):
         all_syns = []

@@ -35,6 +35,24 @@ from .tweet_manipulations import *
 from .likes_replies_generator import LikesRepliesGenerator
 
 def index(request):
+    syn1 = wordnet.synsets('vaccine')
+    syn2 = wordnet.synsets('illness')
+    print(len(syn1))
+    print(len(syn2))
+    for i in range(0, len(syn1)):
+        for j in range(0, len(syn2)):
+            try:
+                syn1_a = syn1[i]
+                syn2_a = syn2[j]
+                print(str(i) + "......" + str(j))
+                print('wup: ' + str(syn1_a.wup_similarity(syn2_a)))
+                print('path: ' + str(syn1_a.path_similarity(syn2_a)))
+                print('lch: ' + str(syn1_a.lch_similarity(syn2_a)))
+            except:
+                pass
+
+
+
     
     # print(nltk.tag.pos_tag(['lgbtq']))
     # print(nltk.tag.pos_tag(['libdems']))

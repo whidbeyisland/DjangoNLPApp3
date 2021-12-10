@@ -373,7 +373,7 @@ class WorkWithModels:
                     tweets_punctuated = tweets_punctuated + 1
             percent_capitalized = tweets_capitalized / tweets_to_inspect
             percent_punctuated = tweets_punctuated / tweets_to_inspect
-            print(str(percent_capitalized) + '.........' + str(percent_punctuated))
+            # print(str(percent_capitalized) + '.........' + str(percent_punctuated))
             return [percent_capitalized, percent_punctuated]
         except Exception as e:
             print(e)
@@ -391,12 +391,12 @@ class WorkWithModels:
             cur_sub = subs_thisuser[i]
             intro = self.t.intro_from_prompt(topic, self.rare_words_user)
             preds = self.learn_eachsub[cur_sub].predict(intro, num_words, temperature=0.75)
-                    # racc: [self.learn_eachsub ... for _ in range(n_sentences)]
+                # racc: [self.learn_eachsub ... for _ in range(n_sentences)]
             # preds = [self.learn_eachsub[cur_sub].predict(intro, num_words, temperature=0.75) for _ in range(num_sentences)]
             preds_manipulated = self.t.apply_manipulations(preds, topic, self.get_user_styles(username), self.rare_words_user)
             # preds_manipulated = [self.t.apply_manipulations(preds[i], self.rare_words_user) for i in range(0, num_sentences)]
             preds_manipulated_all_subs.append(preds_manipulated)
-            print('-------------------------------------------')
-            print('\n'.join(preds_manipulated))
-            print('-------------------------------------------')
+            # print('-------------------------------------------')
+            # print('\n'.join(preds_manipulated))
+            # print('-------------------------------------------')
         return preds_manipulated_all_subs
