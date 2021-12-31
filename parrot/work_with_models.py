@@ -86,6 +86,7 @@ class WorkWithModels:
     toks200_user = None
     num_user = None
     rare_words_user = []
+    alias_user = ''
 
     def __init__(self, d, t):
         self.d = d
@@ -194,7 +195,6 @@ class WorkWithModels:
         
         print('Loading learners...')
         try:
-            print('Attempt 2')
             self.d.download_learn_c_pth()
             self.learn_c = text_classifier_learner(self.dls_c, AWD_LSTM, drop_mult = 0.5, metrics = accuracy).to_fp16()
             # self.learn_c.path = Path(str(os.path.join(path_cwd, path_models)))
@@ -286,6 +286,9 @@ class WorkWithModels:
             if i > max_tweets:
                 break
             tweets_list.append([tweet.content])
+            # if i == 0:
+            #     self.alias_user = tweet.user.displayname
+            #     print('ALIAS......................... ' + self.alias_user)
             # racc: tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username])
  
         tweets_df = pd.DataFrame(tweets_list, columns=['Content'])
