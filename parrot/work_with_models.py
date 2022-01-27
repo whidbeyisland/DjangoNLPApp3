@@ -132,7 +132,6 @@ class WorkWithModels:
             if word in tweet:
                 index = tweet.index(word)
                 pos_tweet_predicted = nltk.tag.pos_tag(tweet)
-                # print(pos_tweet_predicted)
                 pos_word_predicted = pos_tweet_predicted[index]
                 return pos_word_predicted[1]
         return 'NN'
@@ -207,7 +206,6 @@ class WorkWithModels:
         print('Success!')
 
     def get_generation_assets_ready(self):
-        print(self.d.testfunc())
         print('Getting assets for tweet generation, hang tight................')
         print('Loading dataframes...')
         try:
@@ -286,8 +284,8 @@ class WorkWithModels:
             if i > max_tweets:
                 break
             if i == 0:
+                # setting user's alias to display name retrieved from their 1st tweet
                 self.alias_user = tweet.user.displayname
-                print('ALIAS......................... ' + self.alias_user)
             tweets_list.append([tweet.content])
             # racc: tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username])
  

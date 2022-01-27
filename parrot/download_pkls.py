@@ -59,9 +59,6 @@ urls_eachsub = {
 class DownloadPkls:
     def __init__(self):
         pass
-    
-    def testfunc(self):
-        return 'hello world!'
 
     def download_things(self, _url, _folder, _filename):
         output = os.path.join(path_cwd, 'static', _folder, _filename)

@@ -112,7 +112,6 @@ def index(request):
 
                 # get other variables ready for the index.html homepage
                 predicted_label = 'success!'
-                # user_alias = username # coati: retrieve person's alias
                 user_alias = w.get_user_alias(username)
                 request_complete = True
 
