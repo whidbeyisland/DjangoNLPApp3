@@ -285,10 +285,10 @@ class WorkWithModels:
         for i,tweet in enumerate(sntwitter.TwitterSearchScraper('from:' + username).get_items()): 
             if i > max_tweets:
                 break
+            if i == 0:
+                self.alias_user = tweet.user.displayname
+                print('ALIAS......................... ' + self.alias_user)
             tweets_list.append([tweet.content])
-            # if i == 0:
-            #     self.alias_user = tweet.user.displayname
-            #     print('ALIAS......................... ' + self.alias_user)
             # racc: tweets_list.append([tweet.date, tweet.id, tweet.content, tweet.user.username])
  
         tweets_df = pd.DataFrame(tweets_list, columns=['Content'])
@@ -350,6 +350,12 @@ class WorkWithModels:
         
         self.subs_eachuser[username] = subs_thisuser
         # coati: SAVE THIS SOMEWHERE, like in a csv in the user's copy of the repo
+    
+    def get_user_alias(self, username):
+        if self.alias_user == '':
+            return self.username
+        else:
+            return self.alias_user
     
     def get_user_styles(self, username):
         # coati: for future: don't include links ("http...", "t.co...") or at's ("@") as uncapitalized tweets,
