@@ -196,9 +196,7 @@ class WorkWithModels:
         try:
             self.d.download_learn_c_pth()
             self.learn_c = text_classifier_learner(self.dls_c, AWD_LSTM, drop_mult = 0.5, metrics = accuracy).to_fp16()
-            # self.learn_c.path = Path(str(os.path.join(path_cwd, path_models)))
             self.learn_c.path = Path(str(path_cwd))/'static'
-            # self.learn_c.path = Path(str(path_cwd)/'static')
             self.learn_c = self.learn_c.load('nlpmodel3_clas')
         except Exception as e:
             print(e)
@@ -210,7 +208,6 @@ class WorkWithModels:
         print('Loading dataframes...')
         try:
             self.df_eachsub = torch.load(os.path.join(path_cwd, path_df, 'df_eachsub_tweets.pkl'))
-            print(str(len(self.df_eachsub)))
         except Exception as e:
             print(e)
         
@@ -222,7 +219,6 @@ class WorkWithModels:
         print('Loading txts...')
         try:
             self.txts_eachsub = torch.load(os.path.join(path_cwd, path_df, 'txts_eachsub.pkl'))
-            print(str(len(self.txts_eachsub)))
         except Exception as e:
             print(e)
         # coati: TO DO................ store txts_eachsub.pkl on drive so you can download it, currently the program has
@@ -232,7 +228,6 @@ class WorkWithModels:
         try:
             self.d.download_toks200()
             self.toks200_eachsub = torch.load(os.path.join(path_cwd, path_toks200, 'toks200-tweets.pkl'))
-            print(str(len(self.toks200_eachsub)))
         except Exception as e:
             print(e)
 
@@ -240,7 +235,6 @@ class WorkWithModels:
         try:
             self.d.download_nums200()
             self.nums200_eachsub = torch.load(os.path.join(path_cwd, path_nums200, 'nums200-eachsub.pkl'))
-            print(str(len(self.nums200_eachsub)))
         except Exception as e:
             print(e)
         
@@ -250,7 +244,6 @@ class WorkWithModels:
                 filename = 'dls-nlp-' + subs[i] + '-ALT.pkl'
                 dls_thissub = torch.load(os.path.join(path_cwd, path_dls, filename))
                 self.dls_eachsub.append(dls_thissub)
-            print(str(len(self.dls_eachsub)))
         except Exception as e:
             print(e)
 
@@ -266,7 +259,6 @@ class WorkWithModels:
                     learn.path = Path(str(path_cwd))/'static'
                     learn = learn.load(filename)
 
-                    # learn = torch.load(os.path.join(path_cwd, path_models, filename))
                     self.learn_eachsub.append(learn)
                     print('Successfully loaded model ' + str(i))
                 except:
@@ -341,8 +333,6 @@ class WorkWithModels:
                 # coati: currently just returning top 3 categories --- can make this mechanism more complex later
                 if i < num_to_return:
                     subs_thisuser.append(orig_index_of_pred)
-                    # racc: switching from names to indices, may cause issues later
-                    # subs_thisuser.append(subs[orig_index_of_pred])
         except Exception as e:
             print(e)
         
@@ -380,7 +370,6 @@ class WorkWithModels:
             
             percent_capitalized = tweets_capitalized / (tweets_capitalized + tweets_uncapitalized)
             percent_punctuated = tweets_punctuated / tweets_to_inspect
-            # print(str(percent_capitalized) + '.........' + str(percent_punctuated))
             return [percent_capitalized, percent_punctuated]
         except Exception as e:
             # might be a "divide by zero" error, so just return .5 for both
@@ -399,11 +388,6 @@ class WorkWithModels:
             intro = self.t.intro_from_prompt(topic, self.rare_words_user)
             preds = self.learn_eachsub[cur_sub].predict(intro, num_words, temperature=0.75)
                 # racc: [self.learn_eachsub ... for _ in range(n_sentences)]
-            # preds = [self.learn_eachsub[cur_sub].predict(intro, num_words, temperature=0.75) for _ in range(num_sentences)]
             preds_manipulated = self.t.apply_manipulations(preds, topic, self.get_user_styles(username), self.rare_words_user)
-            # preds_manipulated = [self.t.apply_manipulations(preds[i], self.rare_words_user) for i in range(0, num_sentences)]
             preds_manipulated_all_subs.append(preds_manipulated)
-            # print('-------------------------------------------')
-            # print('\n'.join(preds_manipulated))
-            # print('-------------------------------------------')
         return preds_manipulated_all_subs

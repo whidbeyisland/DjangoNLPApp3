@@ -345,7 +345,6 @@ class TweetManipulations:
                             pass
         except:
             pass
-        # print(len(all_close_rare_words))
         return all_close_rare_words
     
     def find_syns(self, queried_word):
